@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Navigate } from 'react-router-dom'
-import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users } from 'lucide-react'
+import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users, KeyRound, LogIn } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import Header from './Header.jsx'
 
@@ -46,11 +46,21 @@ function InfoRow({ icon: Icon, label, value, field, type = 'text', editing, form
  * 展示个人信息、编辑功能、隐私设置、信息完善度
  */
 export default function ProfilePage() {
-  const { currentUser, updateProfile, updatePrivacy, getPrivacy, calcProfileCompleteness } = useAuth()
+  const { currentUser, updateProfile, updateLoginAccount, updateLoginPassword, updatePrivacy, getPrivacy, calcProfileCompleteness, isAdmin } = useAuth()
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [form, setForm] = useState(currentUser ? { ...currentUser } : {})
+
+  // 账号安全
+  const [newLoginAccount, setNewLoginAccount] = useState('')
+  const [savingAccount, setSavingAccount] = useState(false)
+  const [accountMsg, setAccountMsg] = useState('')
+  const [oldPwd, setOldPwd] = useState('')
+  const [newPwd, setNewPwd] = useState('')
+  const [confirmPwd, setConfirmPwd] = useState('')
+  const [savingPwd, setSavingPwd] = useState(false)
+  const [pwdMsg, setPwdMsg] = useState('')
 
   const handleChange = useCallback((field, value) => {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -72,6 +82,28 @@ export default function ProfilePage() {
 
   const handlePrivacyChange = (key, value) => {
     updatePrivacy(currentUser.id, { ...privacy, [key]: value })
+  }
+
+  const handleUpdateAccount = async () => {
+    if (!newLoginAccount.trim()) { setAccountMsg('请输入新账号'); return }
+    setSavingAccount(true)
+    const result = await updateLoginAccount(newLoginAccount.trim())
+    setAccountMsg(result.message)
+    setSavingAccount(false)
+    if (result.success) setNewLoginAccount('')
+    setTimeout(() => setAccountMsg(''), 5000)
+  }
+
+  const handleUpdatePassword = async () => {
+    if (!oldPwd || !newPwd || !confirmPwd) { setPwdMsg('请填写完整'); return }
+    if (newPwd !== confirmPwd) { setPwdMsg('两次新密码不一致'); return }
+    if (newPwd.length < 6) { setPwdMsg('新密码至少6位'); return }
+    setSavingPwd(true)
+    const result = await updateLoginPassword(oldPwd, newPwd)
+    setPwdMsg(result.message)
+    setSavingPwd(false)
+    if (result.success) { setOldPwd(''); setNewPwd(''); setConfirmPwd('') }
+    setTimeout(() => setPwdMsg(''), 5000)
   }
 
   const inputClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all'
@@ -186,7 +218,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 隐私设置 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
           <div className="flex items-center gap-2 mb-4">
             <Shield className="text-primary-500" size={20} />
             <h3 className="text-base font-semibold text-gray-800">隐私设置</h3>
@@ -224,6 +256,79 @@ export default function ProfilePage() {
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
               </label>
+            </div>
+          </div>
+        </div>
+
+        {/* 账号安全 */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-2 mb-4">
+            <KeyRound className="text-primary-500" size={20} />
+            <h3 className="text-base font-semibold text-gray-800">账号安全</h3>
+          </div>
+          <p className="text-xs text-gray-400 mb-4">修改登录账号和密码</p>
+
+          {/* 修改登录账号 */}
+          <div className="border border-gray-100 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <LogIn className="text-gray-400" size={16} />
+              <span className="text-sm font-medium text-gray-700">修改登录账号</span>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newLoginAccount}
+                onChange={e => setNewLoginAccount(e.target.value)}
+                placeholder={currentUser.phone || '当前账号'}
+                className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all"
+              />
+              <button
+                onClick={handleUpdateAccount}
+                disabled={savingAccount}
+                className="px-4 py-2 text-sm text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {savingAccount ? '保存中...' : '确认修改'}
+              </button>
+            </div>
+            {accountMsg && <p className="text-xs mt-2 text-green-600">{accountMsg}</p>}
+          </div>
+
+          {/* 修改密码 */}
+          <div className="border border-gray-100 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Lock className="text-gray-400" size={16} />
+              <span className="text-sm font-medium text-gray-700">修改登录密码</span>
+            </div>
+            <div className="space-y-2">
+              <input
+                type="password"
+                value={oldPwd}
+                onChange={e => setOldPwd(e.target.value)}
+                placeholder="原密码"
+                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all"
+              />
+              <input
+                type="password"
+                value={newPwd}
+                onChange={e => setNewPwd(e.target.value)}
+                placeholder="新密码（至少6位）"
+                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all"
+              />
+              <input
+                type="password"
+                value={confirmPwd}
+                onChange={e => setConfirmPwd(e.target.value)}
+                placeholder="确认新密码"
+                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all"
+              />
+              <button
+                onClick={handleUpdatePassword}
+                disabled={savingPwd}
+                className="w-full py-2 text-sm text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {savingPwd ? '保存中...' : '确认修改密码'}
+              </button>
+              {pwdMsg && <p className="text-xs mt-1 text-green-600">{pwdMsg}</p>}
             </div>
           </div>
         </div>

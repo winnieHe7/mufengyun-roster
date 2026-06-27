@@ -249,6 +249,49 @@ export function AuthProvider({ children }) {
     return { success: true, message: '密码重置成功' }
   }, [accounts])
 
+  // ===== 修改登录账号（手机号）=====
+  const updateLoginAccount = useCallback(async (newPhone) => {
+    if (!currentUser) return { success: false, message: '请先登录' }
+    if (currentUser.role === 'admin') return { success: false, message: '管理员账号不支持修改' }
+    if (!newPhone || newPhone.trim().length < 4) return { success: false, message: '账号长度至少4位' }
+
+    if (isSupabaseConfigured) {
+      // 检查新账号是否已被占用
+      const { data: existing } = await supabase
+        .from('accounts').select('id').eq('phone', newPhone.trim()).neq('id', currentUser.id).maybeSingle()
+      if (existing) return { success: false, message: '该账号已被占用' }
+
+      const { error } = await supabase.from('accounts').update({ phone: newPhone.trim() }).eq('id', currentUser.id)
+      if (error) return { success: false, message: '修改失败: ' + error.message }
+
+      // 同步更新 students 表的 phone
+      await supabase.from('students').update({ phone: newPhone.trim() }).eq('phone', currentUser.phone)
+    }
+
+    const updatedUser = { ...currentUser, phone: newPhone.trim() }
+    setCurrentUser(updatedUser)
+    writeToStorage(STORAGE_KEYS.USER, updatedUser)
+    return { success: true, message: '登录账号修改成功，下次请用新账号登录' }
+  }, [currentUser])
+
+  // ===== 修改登录密码 =====
+  const updateLoginPassword = useCallback(async (oldPwd, newPwd) => {
+    if (!currentUser) return { success: false, message: '请先登录' }
+    if (!newPwd || newPwd.length < 6) return { success: false, message: '新密码长度至少6位' }
+
+    if (isSupabaseConfigured) {
+      // 验证旧密码
+      const { data: acc } = await supabase
+        .from('accounts').select('password').eq('id', currentUser.id).single()
+      if (!acc || acc.password !== oldPwd) return { success: false, message: '原密码错误' }
+
+      const { error } = await supabase.from('accounts').update({ password: newPwd }).eq('id', currentUser.id)
+      if (error) return { success: false, message: '修改失败: ' + error.message }
+    }
+
+    return { success: true, message: '密码修改成功，下次请用新密码登录' }
+  }, [currentUser])
+
   // ===== 退出登录 =====
   const logout = useCallback(() => {
     setCurrentUser(null)
@@ -320,6 +363,7 @@ export function AuthProvider({ children }) {
   const value = {
     currentUser, isAdmin, students, accounts, loading,
     setStudents, login, logout, updateProfile,
+    updateLoginAccount, updateLoginPassword,
     createAccount, deleteAccount, resetPassword,
     updatePrivacy, getPrivacy, calcProfileCompleteness,
     isSupabaseConfigured,
