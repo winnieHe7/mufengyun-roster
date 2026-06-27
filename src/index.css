@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== 全局自定义样式 · 墨韵学术配色 ===== */
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f7f4;
+  color: #2d2d2d;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0eee8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1ccc0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b8b0a0;
+}
+
+/* 卡片 hover 上浮效果 */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(30, 58, 95, 0.12);
+}
+
+/* 靛蓝渐变背景 */
+.gradient-header {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2a4a73 100%);
+}
+
+/* 金色点缀渐变 */
+.gradient-accent {
+  background: linear-gradient(135deg, #c9a96e 0%, #d2b288 100%);
+}
+
+/* 靛蓝→金色装饰线 */
+.divider-accent {
+  background: linear-gradient(90deg, #1e3a5f 0%, #c9a96e 100%);
+}
+
+/* 状态标签 */
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-tag-active {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-tag-graduated {
+  background-color: #fff8e1;
+  color: #b8945a;
+}
+
+.status-tag-employment {
+  background-color: #e8eaf6;
+  color: #1e3a5f;
+}
+
+/* 详情页 Modal 动画 */
+.modal-overlay {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* 表格样式 */
+.roster-table th {
+  background-color: #f8f7f4;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e4e0d8;
+  white-space: nowrap;
+  color: #537590;
+}
+
+.roster-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0eee8;
+}
+
+.roster-table tbody tr:hover {
+  background-color: #fdfcfa;
+}
+
+/* 输入框聚焦效果 */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+/* 简易柱状图动画 */
+.bar-chart-bar {
+  transition: width 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+
+/* 金色分割线 */
+.gold-line {
+  height: 3px;
+  width: 48px;
+  background: #c9a96e;
+  border-radius: 2px;
+}
+
+/* 首页 Hero 区背景纹理 */
+.hero-bg {
+  background: linear-gradient(135deg, #1e3a5f 0%, #152845 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(201, 169, 110, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 30%, rgba(201, 169, 110, 0.05) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+/* 章节标题装饰 */
+.section-title {
+  position: relative;
+  padding-left: 14px;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: #c9a96e;
+  border-radius: 2px;
+}

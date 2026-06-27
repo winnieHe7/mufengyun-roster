@@ -1,0 +1,214 @@
+import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
+import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users } from 'lucide-react'
+import { useAuth } from '../context/AuthContext.jsx'
+import Header from './Header.jsx'
+
+/**
+ * 个人中心组件
+ * 展示个人信息、编辑功能、隐私设置、信息完善度
+ */
+export default function ProfilePage() {
+  const { currentUser, updateProfile, updatePrivacy, getPrivacy, calcProfileCompleteness } = useAuth()
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState('')
+
+  const [form, setForm] = useState(currentUser ? { ...currentUser } : {})
+
+  if (!currentUser) return <Navigate to="/login" replace />
+
+  const completeness = calcProfileCompleteness(currentUser)
+  const privacy = getPrivacy(currentUser.id)
+
+  const handleChange = (field, value) => {
+    setForm(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    const result = await updateProfile(form)
+    setMessage(result.message)
+    setSaving(false)
+    setEditing(false)
+    setTimeout(() => setMessage(''), 3000)
+  }
+
+  const handlePrivacyChange = (key, value) => {
+    updatePrivacy(currentUser.id, { ...privacy, [key]: value })
+  }
+
+  const inputClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all'
+
+  const InfoRow = ({ icon: Icon, label, value, field, type = 'text' }) => (
+    <div className="flex items-start gap-3 py-2">
+      <Icon className="text-gray-400 mt-0.5 flex-shrink-0" size={16} />
+      <div className="flex-1">
+        <span className="text-xs text-gray-400">{label}</span>
+        {editing ? (
+          <input
+            type={type}
+            value={form[field] || ''}
+            onChange={e => handleChange(field, e.target.value)}
+            className={inputClass + ' mt-1'}
+          />
+        ) : (
+          <p className="text-sm text-gray-700">{value || '—'}</p>
+        )}
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        {/* 标题 + 操作按钮 */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-gray-800">个人中心</h1>
+          <div className="flex gap-2">
+            {editing ? (
+              <>
+                <button
+                  onClick={() => { setEditing(false); setForm({ ...currentUser }) }}
+                  className="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  <Save size={16} />
+                  {saving ? '保存中...' : '保存'}
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setEditing(true)}
+                className="px-4 py-2 text-sm text-primary-600 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors"
+              >
+                编辑信息
+              </button>
+            )}
+          </div>
+        </div>
+
+        {message && (
+          <div className="bg-green-50 text-green-600 text-sm rounded-lg px-4 py-3 mb-4">
+            {message}
+          </div>
+        )}
+
+        {/* 信息完善度进度条 */}
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-600">信息完善度</span>
+            <span className="text-sm font-bold text-primary-600">{completeness}%</span>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-2.5">
+            <div
+              className="gradient-header h-2.5 rounded-full transition-all duration-500"
+              style={{ width: `${completeness}%` }}
+            />
+          </div>
+          <p className="text-xs text-gray-400 mt-2">
+            完善个人信息有助于校友之间更好地联系和交流
+          </p>
+        </div>
+
+        {/* 个人信息卡片 */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+          <div className="flex items-center gap-4 mb-6">
+            <img
+              src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=1e3a5f&color=fff&size=128`}
+              alt={currentUser.name}
+              className="w-20 h-20 rounded-full border-2 border-primary-100"
+            />
+            <div>
+              <h2 className="text-xl font-bold text-gray-800">{currentUser.name}</h2>
+              <p className="text-sm text-gray-400">{currentUser.major || '专业未填写'}</p>
+              <span className={`status-tag ${currentUser.status === '在读' ? 'status-tag-active' : 'status-tag-graduated'} mt-1`}>
+                {currentUser.status || '在读'}
+              </span>
+            </div>
+          </div>
+
+          <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2">基础信息</h3>
+          <div className="grid grid-cols-2 gap-x-4">
+            <InfoRow icon={User} label="姓名" value={currentUser.name} field="name" />
+            <InfoRow icon={Users} label="性别" value={currentUser.gender} field="gender" />
+            <InfoRow icon={MapPin} label="籍贯" value={currentUser.hometown} field="hometown" />
+            <InfoRow icon={Calendar} label="入学年份" value={currentUser.enrollYear} field="enrollYear" type="number" />
+            <InfoRow icon={Calendar} label="毕业年份" value={currentUser.graduateYear} field="graduateYear" type="number" />
+            <InfoRow icon={BookOpen} label="专业" value={currentUser.major} field="major" />
+          </div>
+
+          <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2 mt-4">就业信息</h3>
+          <div className="grid grid-cols-2 gap-x-4">
+            <InfoRow icon={Building2} label="工作单位" value={currentUser.company} field="company" />
+            <InfoRow icon={Briefcase} label="所属行业" value={currentUser.industry} field="industry" />
+            <InfoRow icon={MapPin} label="所在城市" value={currentUser.city} field="city" />
+            <InfoRow icon={Briefcase} label="岗位" value={currentUser.position} field="position" />
+          </div>
+
+          <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2 mt-4">联系方式</h3>
+          <div className="grid grid-cols-2 gap-x-4">
+            <InfoRow icon={Phone} label="手机号" value={currentUser.phone} field="phone" />
+            <InfoRow icon={Mail} label="邮箱" value={currentUser.email} field="email" />
+          </div>
+
+          {editing && (
+            <div className="mt-4">
+              <InfoRow icon={FileText} label="个人简介" value={currentUser.bio} field="bio" />
+            </div>
+          )}
+        </div>
+
+        {/* 隐私设置 */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+          <div className="flex items-center gap-2 mb-4">
+            <Shield className="text-primary-500" size={20} />
+            <h3 className="text-base font-semibold text-gray-800">隐私设置</h3>
+          </div>
+          <p className="text-xs text-gray-400 mb-4">设置联系方式的可见范围，保护个人隐私</p>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-2">
+                <Lock className="text-gray-400" size={16} />
+                <span className="text-sm text-gray-700">手机号可见</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={privacy.showPhone !== false}
+                  onChange={e => handlePrivacyChange('showPhone', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center gap-2">
+                <Lock className="text-gray-400" size={16} />
+                <span className="text-sm text-gray-700">邮箱可见</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={privacy.showEmail !== false}
+                  onChange={e => handlePrivacyChange('showEmail', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-primary-100 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-500"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
