@@ -50,13 +50,15 @@ export function AuthProvider({ children }) {
 
   // ===== 初始化 =====
   useEffect(() => {
+    // 无论 Supabase 还是本地模式，都先从 localStorage 恢复登录态（保持登录常驻）
+    const savedUser = readFromStorage(STORAGE_KEYS.USER, null)
+    if (savedUser) setCurrentUser(savedUser)
+    const savedPrivacy = readFromStorage(STORAGE_KEYS.PRIVACY, {})
+    setPrivacySettings(savedPrivacy)
+
     if (isSupabaseConfigured) {
       loadFromSupabase()
     } else {
-      const savedUser = readFromStorage(STORAGE_KEYS.USER, null)
-      if (savedUser) setCurrentUser(savedUser)
-      const savedPrivacy = readFromStorage(STORAGE_KEYS.PRIVACY, {})
-      setPrivacySettings(savedPrivacy)
       writeToStorage(STORAGE_KEYS.STUDENTS, students)
     }
   }, [])
