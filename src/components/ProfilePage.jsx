@@ -1,8 +1,45 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Navigate } from 'react-router-dom'
 import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import Header from './Header.jsx'
+
+/**
+ * 信息行组件（提到组件外部，避免每次 render 重建导致 input 丢焦点）
+ */
+function InfoRow({ icon: Icon, label, value, field, type = 'text', editing, form, onChange, inputClass, options }) {
+  return (
+    <div className="flex items-start gap-3 py-2">
+      <Icon className="text-gray-400 mt-0.5 flex-shrink-0" size={16} />
+      <div className="flex-1">
+        <span className="text-xs text-gray-400">{label}</span>
+        {editing ? (
+          options ? (
+            <select
+              value={form[field] || ''}
+              onChange={e => onChange(field, e.target.value)}
+              className={inputClass + ' mt-1'}
+            >
+              <option value="">请选择</option>
+              {options.map(opt => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type={type}
+              value={form[field] || ''}
+              onChange={e => onChange(field, e.target.value)}
+              className={inputClass + ' mt-1'}
+            />
+          )
+        ) : (
+          <p className="text-sm text-gray-700">{value || '—'}</p>
+        )}
+      </div>
+    </div>
+  )
+}
 
 /**
  * 个人中心组件
@@ -13,17 +50,16 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
-
   const [form, setForm] = useState(currentUser ? { ...currentUser } : {})
+
+  const handleChange = useCallback((field, value) => {
+    setForm(prev => ({ ...prev, [field]: value }))
+  }, [])
 
   if (!currentUser) return <Navigate to="/login" replace />
 
   const completeness = calcProfileCompleteness(currentUser)
   const privacy = getPrivacy(currentUser.id)
-
-  const handleChange = (field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }))
-  }
 
   const handleSave = async () => {
     setSaving(true)
@@ -40,24 +76,7 @@ export default function ProfilePage() {
 
   const inputClass = 'w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition-all'
 
-  const InfoRow = ({ icon: Icon, label, value, field, type = 'text' }) => (
-    <div className="flex items-start gap-3 py-2">
-      <Icon className="text-gray-400 mt-0.5 flex-shrink-0" size={16} />
-      <div className="flex-1">
-        <span className="text-xs text-gray-400">{label}</span>
-        {editing ? (
-          <input
-            type={type}
-            value={form[field] || ''}
-            onChange={e => handleChange(field, e.target.value)}
-            className={inputClass + ' mt-1'}
-          />
-        ) : (
-          <p className="text-sm text-gray-700">{value || '—'}</p>
-        )}
-      </div>
-    </div>
-  )
+  const rowProps = { editing, form, onChange: handleChange, inputClass }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,31 +156,31 @@ export default function ProfilePage() {
 
           <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2">基础信息</h3>
           <div className="grid grid-cols-2 gap-x-4">
-            <InfoRow icon={User} label="姓名" value={currentUser.name} field="name" />
-            <InfoRow icon={Users} label="性别" value={currentUser.gender} field="gender" />
-            <InfoRow icon={MapPin} label="籍贯" value={currentUser.hometown} field="hometown" />
-            <InfoRow icon={Calendar} label="入学年份" value={currentUser.enrollYear} field="enrollYear" type="number" />
-            <InfoRow icon={Calendar} label="毕业年份" value={currentUser.graduateYear} field="graduateYear" type="number" />
-            <InfoRow icon={BookOpen} label="专业" value={currentUser.major} field="major" />
+            <InfoRow icon={User} label="姓名" value={currentUser.name} field="name" {...rowProps} />
+            <InfoRow icon={Users} label="性别" value={currentUser.gender} field="gender" {...rowProps} options={['男', '女']} />
+            <InfoRow icon={MapPin} label="籍贯" value={currentUser.hometown} field="hometown" {...rowProps} />
+            <InfoRow icon={Calendar} label="入学年份" value={currentUser.enrollYear} field="enrollYear" type="number" {...rowProps} />
+            <InfoRow icon={Calendar} label="毕业年份" value={currentUser.graduateYear} field="graduateYear" type="number" {...rowProps} />
+            <InfoRow icon={BookOpen} label="专业" value={currentUser.major} field="major" {...rowProps} />
           </div>
 
           <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2 mt-4">就业信息</h3>
           <div className="grid grid-cols-2 gap-x-4">
-            <InfoRow icon={Building2} label="工作单位" value={currentUser.company} field="company" />
-            <InfoRow icon={Briefcase} label="所属行业" value={currentUser.industry} field="industry" />
-            <InfoRow icon={MapPin} label="所在城市" value={currentUser.city} field="city" />
-            <InfoRow icon={Briefcase} label="岗位" value={currentUser.position} field="position" />
+            <InfoRow icon={Building2} label="工作单位" value={currentUser.company} field="company" {...rowProps} />
+            <InfoRow icon={Briefcase} label="所属行业" value={currentUser.industry} field="industry" {...rowProps} />
+            <InfoRow icon={MapPin} label="所在城市" value={currentUser.city} field="city" {...rowProps} />
+            <InfoRow icon={Briefcase} label="岗位" value={currentUser.position} field="position" {...rowProps} />
           </div>
 
           <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2 mt-4">联系方式</h3>
           <div className="grid grid-cols-2 gap-x-4">
-            <InfoRow icon={Phone} label="手机号" value={currentUser.phone} field="phone" />
-            <InfoRow icon={Mail} label="邮箱" value={currentUser.email} field="email" />
+            <InfoRow icon={Phone} label="手机号" value={currentUser.phone} field="phone" {...rowProps} />
+            <InfoRow icon={Mail} label="邮箱" value={currentUser.email} field="email" {...rowProps} />
           </div>
 
           {editing && (
             <div className="mt-4">
-              <InfoRow icon={FileText} label="个人简介" value={currentUser.bio} field="bio" />
+              <InfoRow icon={FileText} label="个人简介" value={currentUser.bio} field="bio" {...rowProps} />
             </div>
           )}
         </div>
