@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /profile
 
-Sitemap: https://your-domain.vercel.app/sitemap.xml
+Sitemap: https://mufengyun-roster.vercel.app/sitemap.xml
