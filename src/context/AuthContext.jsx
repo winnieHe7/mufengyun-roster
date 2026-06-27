@@ -353,6 +353,7 @@ export function AuthProvider({ children }) {
       if (updates.phone) dbUpdates.phone = updates.phone
       if (updates.email !== undefined) dbUpdates.email = updates.email
       if (updates.bio !== undefined) dbUpdates.bio = updates.bio
+      if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar
 
       if (Object.keys(dbUpdates).length > 0) {
         const { error } = await supabase.from('students').update(dbUpdates).eq('id', targetId)

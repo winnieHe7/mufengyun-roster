@@ -1,8 +1,46 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { Navigate } from 'react-router-dom'
-import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users, KeyRound, LogIn } from 'lucide-react'
+import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users, KeyRound, LogIn, Camera, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import Header from './Header.jsx'
+
+/**
+ * 压缩图片到指定尺寸
+ * @param {File} file - 原始图片文件
+ * @param {number} maxSize - 最大边长（像素）
+ * @param {number} quality - JPEG 质量 0-1
+ * @returns {Promise<string>} Base64 格式的压缩图片
+ */
+async function compressImage(file, maxSize = 256, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith('image/')) {
+      reject(new Error('请选择图片文件'))
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.onload = () => {
+        let { width, height } = img
+        if (width > height) {
+          if (width > maxSize) { height = Math.round(height * maxSize / width); width = maxSize }
+        } else {
+          if (height > maxSize) { width = Math.round(width * maxSize / height); height = maxSize }
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', quality))
+      }
+      img.onerror = () => reject(new Error('图片加载失败'))
+      img.src = e.target.result
+    }
+    reader.onerror = () => reject(new Error('文件读取失败'))
+    reader.readAsDataURL(file)
+  })
+}
 
 /**
  * 信息行组件（提到组件外部，避免每次 render 重建导致 input 丢焦点）
@@ -62,9 +100,78 @@ export default function ProfilePage() {
   const [savingPwd, setSavingPwd] = useState(false)
   const [pwdMsg, setPwdMsg] = useState('')
 
+  // 头像上传
+  const fileInputRef = useRef(null)
+  const [avatarMsg, setAvatarMsg] = useState('')
+  const [avatarLoading, setAvatarLoading] = useState(false)
+
   const handleChange = useCallback((field, value) => {
     setForm(prev => ({ ...prev, [field]: value }))
   }, [])
+
+  // 头像上传处理：压缩到 200x200，转 base64 存储
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setAvatarMsg('')
+
+    // 格式校验
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      setAvatarMsg('仅支持 JPG/PNG/WebP/GIF 格式')
+      return
+    }
+    // 大小校验（原始文件 10MB 以内）
+    if (file.size > 10 * 1024 * 1024) {
+      setAvatarMsg('图片大小不能超过 10MB')
+      return
+    }
+
+    setAvatarLoading(true)
+    try {
+      // 读取文件 → canvas 压缩 → base64
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const SIZE = 200
+          canvas.width = SIZE
+          canvas.height = SIZE
+          const ctx = canvas.getContext('2d')
+
+          // 居中裁剪为正方形
+          const minSide = Math.min(img.width, img.height)
+          const sx = (img.width - minSide) / 2
+          const sy = (img.height - minSide) / 2
+          ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, SIZE, SIZE)
+
+          // 压缩为 JPEG base64（约 10-30KB）
+          const compressed = canvas.toDataURL('image/jpeg', 0.85)
+
+          // 更新到 form 和预览
+          setForm(prev => ({ ...prev, avatar: compressed }))
+          setAvatarLoading(false)
+          setAvatarMsg('头像已加载，点击保存生效')
+          setTimeout(() => setAvatarMsg(''), 4000)
+        }
+        img.onerror = () => { setAvatarLoading(false); setAvatarMsg('图片加载失败') }
+        img.src = event.target.result
+      }
+      reader.readAsDataURL(file)
+    } catch (err) {
+      setAvatarLoading(false)
+      setAvatarMsg('上传失败: ' + err.message)
+    }
+    // 清空 input 以便重复选择同一文件
+    e.target.value = ''
+  }
+
+  const handleRemoveAvatar = () => {
+    setForm(prev => ({ ...prev, avatar: '' }))
+    setAvatarMsg('头像已清除，点击保存生效')
+    setTimeout(() => setAvatarMsg(''), 4000)
+  }
 
   if (!currentUser) return <Navigate to="/login" replace />
 
@@ -172,17 +279,49 @@ export default function ProfilePage() {
         {/* 个人信息卡片 */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
           <div className="flex items-center gap-4 mb-6">
-            <img
-              src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=1e3a5f&color=fff&size=128`}
-              alt={currentUser.name}
-              className="w-20 h-20 rounded-full border-2 border-primary-100"
-            />
+            {/* 头像 + 编辑模式上传 */}
+            <div className="relative flex-shrink-0">
+              <img
+                src={form.avatar || currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=1e3a5f&color=fff&size=128`}
+                alt={currentUser.name}
+                className="w-20 h-20 rounded-full border-2 border-primary-100 object-cover"
+              />
+              {editing && (
+                <>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={avatarLoading}
+                    className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary-500 hover:bg-primary-600 text-white flex items-center justify-center shadow-md transition-colors disabled:opacity-50"
+                    title="上传头像"
+                  >
+                    <Camera size={14} />
+                  </button>
+                  {form.avatar && (
+                    <button
+                      onClick={handleRemoveAvatar}
+                      className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-gray-400 hover:bg-red-500 text-white flex items-center justify-center shadow-md transition-colors"
+                      title="移除头像"
+                    >
+                      <X size={12} />
+                    </button>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                    onChange={handleAvatarChange}
+                    className="hidden"
+                  />
+                </>
+              )}
+            </div>
             <div>
               <h2 className="text-xl font-bold text-gray-800">{currentUser.name}</h2>
               <p className="text-sm text-gray-400">{currentUser.major || '专业未填写'}</p>
               <span className={`status-tag ${currentUser.status === '在读' ? 'status-tag-active' : 'status-tag-graduated'} mt-1`}>
                 {currentUser.status || '在读'}
               </span>
+              {avatarMsg && <p className="text-xs text-primary-500 mt-1">{avatarMsg}</p>}
             </div>
           </div>
 
