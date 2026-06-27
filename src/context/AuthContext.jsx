@@ -116,9 +116,34 @@ export function AuthProvider({ children }) {
         return { success: false, message: '账号或密码错误' }
       }
 
+      // 查 students 表拿到 studentId（个人信息保存在 students 表）
+      let studentId = null
+      const { data: stu } = await supabase
+        .from('students').select('id').eq('phone', data.phone).maybeSingle()
+      if (stu) studentId = stu.id
+
       const userInfo = {
-        id: data.id, name: data.name, phone: data.phone,
+        id: data.id, studentId, name: data.name, phone: data.phone,
         role: data.role, degree: data.degree, avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=1e3a5f&color=fff`,
+      }
+      // 同时加载完整学生信息
+      if (studentId) {
+        const { data: fullStu } = await supabase.from('students').select('*').eq('id', studentId).maybeSingle()
+        if (fullStu) {
+          userInfo.gender = fullStu.gender
+          userInfo.ethnicity = fullStu.ethnicity
+          userInfo.hometown = fullStu.hometown
+          userInfo.enrollYear = fullStu.enroll_year
+          userInfo.graduateYear = fullStu.graduate_year
+          userInfo.status = fullStu.status
+          userInfo.major = fullStu.major
+          userInfo.company = fullStu.company
+          userInfo.industry = fullStu.industry
+          userInfo.city = fullStu.city
+          userInfo.position = fullStu.position
+          userInfo.email = fullStu.email
+          userInfo.bio = fullStu.bio
+        }
       }
       setCurrentUser(userInfo)
       writeToStorage(STORAGE_KEYS.USER, userInfo)
@@ -309,13 +334,15 @@ export function AuthProvider({ children }) {
     writeToStorage(STORAGE_KEYS.USER, updatedUser)
 
     if (isSupabaseConfigured) {
+      // 用 studentId 更新 students 表（不是 accounts 的 id）
+      const targetId = currentUser.studentId || currentUser.id
       // 转 snake_case
       const dbUpdates = {}
       if (updates.name) dbUpdates.name = updates.name
-      if (updates.gender) dbUpdates.gender = updates.gender
+      if (updates.gender !== undefined) dbUpdates.gender = updates.gender
       if (updates.hometown !== undefined) dbUpdates.hometown = updates.hometown
-      if (updates.enrollYear) dbUpdates.enroll_year = updates.enrollYear
-      if (updates.graduateYear) dbUpdates.graduate_year = updates.graduateYear
+      if (updates.enrollYear !== undefined && updates.enrollYear !== '') dbUpdates.enroll_year = updates.enrollYear
+      if (updates.graduateYear !== undefined && updates.graduateYear !== '') dbUpdates.graduate_year = updates.graduateYear
       if (updates.status) dbUpdates.status = updates.status
       if (updates.degree) dbUpdates.degree = updates.degree
       if (updates.major !== undefined) dbUpdates.major = updates.major
@@ -328,13 +355,17 @@ export function AuthProvider({ children }) {
       if (updates.bio !== undefined) dbUpdates.bio = updates.bio
 
       if (Object.keys(dbUpdates).length > 0) {
-        await supabase.from('students').update(dbUpdates).eq('id', currentUser.id)
+        const { error } = await supabase.from('students').update(dbUpdates).eq('id', targetId)
+        if (error) {
+          return { success: false, message: '保存失败: ' + error.message }
+        }
       }
     }
 
     // 本地同步
+    const targetId = currentUser.studentId || currentUser.id
     const updatedStudents = students.map(s =>
-      s.id === currentUser.id ? { ...s, ...updates } : s
+      s.id === targetId ? { ...s, ...updates } : s
     )
     setStudents(updatedStudents)
     if (!isSupabaseConfigured) writeToStorage(STORAGE_KEYS.STUDENTS, updatedStudents)
