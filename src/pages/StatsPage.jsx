@@ -26,7 +26,7 @@ export default function StatsPage() {
   const byDegree = useMemo(() => {
     const map = {}
     students.forEach(s => {
-      const d = s.degree || '研究生'
+      const d = s.degree || '硕士研究生'
       map[d] = (map[d] || 0) + 1
     })
     return Object.entries(map).sort((a, b) => b[1] - a[1])

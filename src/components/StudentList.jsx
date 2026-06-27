@@ -17,7 +17,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
   const grouped = useMemo(() => {
     const map = {}
     students.forEach(s => {
-      const key = `${s.enrollYear}-${s.degree || '研究生'}`
+      const key = `${s.enrollYear}-${s.degree || '硕士研究生'}`
       if (!map[key]) map[key] = []
       map[key].push(s)
     })
@@ -27,8 +27,8 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
         const [yearB, degreeB] = b[0].split('-')
         // 先按年份降序
         if (Number(yearB) !== Number(yearA)) return Number(yearB) - Number(yearA)
-        // 再按学历层次排序：博士生 > 研究生 > 本科生
-        const degreeOrder = { '博士生': 0, '研究生': 1, '本科生': 2 }
+        // 再按学历层次排序：博士研究生 > 硕士研究生 > 本科生
+        const degreeOrder = { '博士研究生': 0, '硕士研究生': 1, '本科生': 2 }
         return (degreeOrder[degreeA] ?? 9) - (degreeOrder[degreeB] ?? 9)
       })
       .map(([key, list]) => {

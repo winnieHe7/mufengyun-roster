@@ -122,7 +122,7 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
           <SectionTitle>学业履历信息</SectionTitle>
           <div className="grid grid-cols-2 gap-x-4">
             <InfoRow icon={Calendar} label="入学年级" value={student.enrollYear ? `${student.enrollYear}级` : ''} />
-            <InfoRow icon={BookOpen} label="学历层次" value={student.degree || '研究生'} />
+            <InfoRow icon={BookOpen} label="学历层次" value={student.degree || '硕士研究生'} />
             <InfoRow icon={Calendar} label="毕业年份" value={student.graduateYear ? `${student.graduateYear}年` : ''} />
             <InfoRow icon={BookOpen} label="专业" value={student.major} />
             <InfoRow icon={User} label="在校状态" value={student.status} />

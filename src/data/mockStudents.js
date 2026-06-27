@@ -10,7 +10,7 @@
  * @property {number} enrollYear - 入学年份
  * @property {number} graduateYear - 毕业年份（在读学生为预计毕业年份）
  * @property {string} status - 在校状态：在读 / 已毕业
- * @property {string} degree - 学历层次：研究生 / 本科生 / 博士生
+ * @property {string} degree - 学历层次：本科生 / 硕士研究生 / 博士研究生
  * @property {string} major - 专业
  * @property {string} company - 工作单位
  * @property {string} industry - 所属行业
@@ -817,5 +817,5 @@ const mockStudents = [
   },
 ]
 
-// 为所有记录添加默认学历层次（目前均为研究生，后续可按需改为本科生/博士生）
-export default mockStudents.map(s => ({ ...s, degree: s.degree || '研究生' }))
+// 为所有记录添加默认学历层次（目前均为硕士研究生，后续可按需改为本科生/博士研究生）
+export default mockStudents.map(s => ({ ...s, degree: s.degree || '硕士研究生' }))

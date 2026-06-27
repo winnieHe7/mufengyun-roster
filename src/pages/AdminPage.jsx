@@ -29,14 +29,14 @@ export default function AdminPage() {
 
   // 新建账号表单
   const [newAccount, setNewAccount] = useState({
-    name: '', phone: '', password: '', gender: '男', degree: '研究生',
+    name: '', phone: '', password: '', gender: '男', degree: '硕士研究生',
     enrollYear: '', graduateYear: '', hometown: '', major: '', city: '', email: '',
   })
 
   // 新增/编辑学生表单
   const emptyStudent = {
     name: '', gender: '男', ethnicity: '汉族', hometown: '', enrollYear: '', graduateYear: '',
-    status: '在读', degree: '研究生', major: '', company: '', industry: '', city: '',
+    status: '在读', degree: '硕士研究生', major: '', company: '', industry: '', city: '',
     position: '', phone: '', email: '', bio: '',
   }
   const [studentForm, setStudentForm] = useState(emptyStudent)
@@ -51,7 +51,7 @@ export default function AdminPage() {
     setMessage(result.message)
     if (result.success) {
       setShowCreateForm(false)
-      setNewAccount({ name: '', phone: '', password: '', gender: '男', degree: '研究生', enrollYear: '', graduateYear: '', hometown: '', major: '', city: '', email: '' })
+      setNewAccount({ name: '', phone: '', password: '', gender: '男', degree: '硕士研究生', enrollYear: '', graduateYear: '', hometown: '', major: '', city: '', email: '' })
     }
     setTimeout(() => setMessage(''), 5000)
   }
@@ -104,7 +104,7 @@ export default function AdminPage() {
     setStudentForm({
       name: student.name || '', gender: student.gender || '男', ethnicity: student.ethnicity || '汉族',
       hometown: student.hometown || '', enrollYear: student.enrollYear || '', graduateYear: student.graduateYear || '',
-      status: student.status || '在读', degree: student.degree || '研究生', major: student.major || '',
+      status: student.status || '在读', degree: student.degree || '硕士研究生', major: student.major || '',
       company: student.company || '', industry: student.industry || '', city: student.city || '',
       position: student.position || '', phone: student.phone || '', email: student.email || '', bio: student.bio || '',
     })
@@ -215,9 +215,9 @@ export default function AdminPage() {
       <div>
         <label className="block text-sm text-gray-500 mb-1">学历层次</label>
         <select value={studentForm.degree} onChange={e => setStudentForm({...studentForm, degree: e.target.value})} className={inputClass}>
-          <option value="研究生">研究生</option>
           <option value="本科生">本科生</option>
-          <option value="博士生">博士生</option>
+          <option value="硕士研究生">硕士研究生</option>
+          <option value="博士研究生">博士研究生</option>
         </select>
       </div>
       <div>
@@ -368,7 +368,7 @@ export default function AdminPage() {
                         <td className="font-medium text-primary-500">{student.name}</td>
                         <td>{student.major}</td>
                         <td>{student.enrollYear}级</td>
-                        <td>{student.degree || '研究生'}</td>
+                        <td>{student.degree || '硕士研究生'}</td>
                         <td>{student.city || '—'}</td>
                         <td>{student.industry || '—'}</td>
                         <td>
