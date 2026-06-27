@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Mail, MapPin, Award, BookOpen, Calendar, Briefcase, Users, Target, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Mail, MapPin, Award, BookOpen, Calendar, Briefcase, Users, Target, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import { mentorInfo, teamInfo } from '../data/siteInfo.js'
 
@@ -25,7 +25,6 @@ export default function AboutPage() {
 
         {/* ===== 导师简介 ===== */}
         <section className="bg-white rounded-2xl shadow-sm border border-warm-200 overflow-hidden mb-6">
-          {/* 顶部渐变条 */}
           <div className="h-2 divider-accent" />
 
           <div className="p-6 md:p-8">
@@ -43,7 +42,6 @@ export default function AboutPage() {
                 <p className="text-accent-400 font-medium mt-1">{mentorInfo.title}</p>
                 <p className="text-sm text-gray-500 leading-relaxed mt-3">{mentorInfo.bio}</p>
 
-                {/* 联系方式 */}
                 <div className="flex flex-wrap gap-4 mt-4">
                   <span className="flex items-center gap-1.5 text-sm text-gray-500">
                     <Mail size={14} className="text-accent-400" />
@@ -69,22 +67,6 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* 教育背景 */}
-            <div className="mb-6">
-              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">教育背景</h3>
-              <div className="space-y-3">
-                {mentorInfo.education.map((edu, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-warm-100 rounded-lg">
-                    <Calendar size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-700">{edu.school} · {edu.degree}</p>
-                      <p className="text-xs text-gray-400">{edu.major} · {edu.period}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* 工作经历 */}
             <div className="mb-6">
               <h3 className="text-base font-semibold text-primary-500 section-title mb-3">工作经历</h3>
@@ -101,15 +83,53 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* 学术成果 */}
-            <div>
-              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">主要成果</h3>
+            {/* 学术兼职 */}
+            <div className="mb-6">
+              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">学术兼职与社会职务</h3>
+              <div className="grid md:grid-cols-2 gap-2">
+                {mentorInfo.titles.map((t, i) => (
+                  <div key={i} className="flex items-start gap-2 p-2.5 bg-warm-100 rounded-lg">
+                    <BadgeCheck size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-gray-600">{t}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 科研成果 */}
+            <div className="mb-6">
+              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">科研成果</h3>
               <div className="space-y-2">
                 {mentorInfo.achievements.map((a, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <CheckCircle2 size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-gray-600">{a}</p>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 荣誉奖项 */}
+            <div className="mb-6">
+              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">荣誉与奖项</h3>
+              <div className="space-y-2">
+                {mentorInfo.honors.map((h, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <Medal size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-gray-600">{h}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 奖教金 */}
+            <div>
+              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">奖教金</h3>
+              <div className="flex flex-wrap gap-2">
+                {mentorInfo.awards.map((a, i) => (
+                  <span key={i} className="px-3 py-1.5 bg-amber-50 text-amber-700 text-sm rounded-lg border border-amber-100">
+                    {a}
+                  </span>
                 ))}
               </div>
             </div>
