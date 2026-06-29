@@ -220,28 +220,30 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      {/* 悬浮保存按钮 - 编辑模式下右侧垂直居中 */}
+      {editing && (
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center gap-1.5 px-5 py-4 text-white bg-primary-500 hover:bg-primary-600 rounded-2xl shadow-xl shadow-primary-500/30 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+        >
+          <Save size={22} />
+          <span className="text-sm font-medium">{saving ? '保存中' : '保存'}</span>
+        </button>
+      )}
+
       <div className="max-w-3xl mx-auto px-4 py-8">
         {/* 标题 + 操作按钮 */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">个人中心</h1>
           <div className="flex gap-2">
             {editing ? (
-              <>
-                <button
-                  onClick={() => { setEditing(false); setForm({ ...currentUser }) }}
-                  className="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                >
-                  取消
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="flex items-center gap-1.5 px-4 py-2 text-sm text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50"
-                >
-                  <Save size={16} />
-                  {saving ? '保存中...' : '保存'}
-                </button>
-              </>
+              <button
+                onClick={() => { setEditing(false); setForm({ ...currentUser }) }}
+                className="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                取消
+              </button>
             ) : (
               <button
                 onClick={() => setEditing(true)}
