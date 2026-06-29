@@ -220,12 +220,13 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      {/* 悬浮保存按钮 - 编辑模式下右侧垂直居中 */}
+      {/* 悬浮保存按钮 - 编辑模式下紧贴内容框右侧，垂直居中跟随滚动 */}
       {editing && (
         <button
           onClick={handleSave}
           disabled={saving}
-          className="fixed right-6 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center gap-1.5 px-5 py-4 text-white bg-primary-500 hover:bg-primary-600 rounded-2xl shadow-xl shadow-primary-500/30 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+          style={{ right: 'max(1rem, calc((100vw - 48rem) / 2 - 3.25rem))' }}
+          className="fixed top-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center gap-1.5 px-5 py-4 text-white bg-primary-500 hover:bg-primary-600 rounded-2xl shadow-xl shadow-primary-500/30 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
         >
           <Save size={22} />
           <span className="text-sm font-medium">{saving ? '保存中' : '保存'}</span>
