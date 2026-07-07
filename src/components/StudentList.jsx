@@ -39,7 +39,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
 
   // 导出CSV
   const handleExport = () => {
-    const headers = ['姓名', '性别', '民族', '籍贯', '入学年份', '毕业年份', '状态', '专业', '工作单位', '行业', '城市', '岗位', '手机号', '邮箱', '简介']
+    const headers = ['姓名', '性别', '民族', '籍贯', '入学年份', '毕业年份', '状态', '专业', '工作单位', '行业', '当前城市', '岗位', '手机号', '邮箱', '简介']
     const rows = students.map(s => [
       s.name, s.gender, s.ethnicity, s.hometown, s.enrollYear, s.graduateYear, s.status,
       s.major, s.company, s.industry, s.city, s.position, s.phone, s.email, s.bio,
@@ -125,16 +125,16 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
             </div>
           ) : (
             <div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
-              <table className="w-full roster-table">
+              <table className="w-full roster-table table-fixed">
                 <thead>
                   <tr>
-                    <th>姓名</th>
-                    <th>专业</th>
-                    <th>籍贯</th>
-                    <th>城市</th>
-                    <th>行业</th>
-                    <th>岗位</th>
-                    <th>状态</th>
+                    <th className="w-24">姓名</th>
+                    <th className="w-32">专业</th>
+                    <th className="w-28">籍贯</th>
+                    <th className="w-28">当前城市</th>
+                    <th className="w-28">行业</th>
+                    <th className="w-28">岗位</th>
+                    <th className="w-20">状态</th>
                   </tr>
                 </thead>
                 <tbody>
