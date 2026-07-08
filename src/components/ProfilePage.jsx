@@ -218,7 +218,7 @@ export default function ProfilePage() {
   const rowProps = { editing, form, onChange: handleChange, inputClass }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Header />
       {/* 悬浮保存按钮 - 编辑模式下紧贴内容框右侧，垂直居中跟随滚动 */}
       {editing && (

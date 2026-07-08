@@ -40,6 +40,11 @@ export default {
           500: '#b8b0a0',
         },
       },
+      boxShadow: {
+        'soft': '0 6px 24px rgba(30, 58, 95, 0.08)',
+        'soft-lg': '0 10px 36px rgba(30, 58, 95, 0.10)',
+        'soft-xl': '0 16px 48px rgba(30, 58, 95, 0.12)',
+      },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',

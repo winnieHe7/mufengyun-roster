@@ -53,7 +53,7 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
         return (
           <div
             key={index}
-            className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 card-hover text-center"
+            className="card-surface p-5 card-hover text-center"
           >
             <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center mx-auto mb-2`}>
               <Icon className={card.text} size={20} />

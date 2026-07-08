@@ -64,11 +64,11 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
       <div className="absolute inset-0 bg-black/40" />
 
       <div
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content"
+        className="relative bg-white rounded-xl shadow-soft-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content"
         onClick={e => e.stopPropagation()}
       >
         {/* 顶部渐变背景 + 头像 */}
-        <div className="gradient-header h-28 rounded-t-2xl relative">
+        <div className="gradient-header h-28 rounded-t-xl relative">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"

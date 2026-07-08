@@ -124,7 +124,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
               ))}
             </div>
           ) : (
-            <div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="overflow-x-auto card-surface">
               <table className="w-full roster-table table-fixed">
                 <thead>
                   <tr>

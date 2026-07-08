@@ -17,12 +17,12 @@ export default function FilterBar({ filters, onFilterChange, onReset, onConfirm,
   const statusOptions = ['全部', '在读', '已毕业']
 
   const selectClass =
-    'appearance-none bg-white border border-warm-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-700 focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition-all cursor-pointer'
+    'appearance-none bg-white border border-warm-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-700 focus:border-primary-400 transition-all cursor-pointer'
 
   const wrapperClass = 'flex-1 min-w-[130px]'
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-warm-200">
+    <div className="card-surface p-4">
       <div className="flex items-center gap-2 mb-3">
         <Filter className="text-accent-400" size={18} />
         <span className="text-sm font-semibold text-gray-700">多维度筛选</span>

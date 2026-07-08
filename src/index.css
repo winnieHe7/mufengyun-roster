@@ -14,7 +14,8 @@ html, body {
   font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8f7f4;
+  background: linear-gradient(160deg, #f8f7f4 0%, #f2f5f8 55%, #eef1f5 100%);
+  background-attachment: fixed;
   color: #2d2d2d;
 }
 
@@ -45,6 +46,14 @@ html, body {
 .card-hover:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 28px rgba(30, 58, 95, 0.12);
+}
+
+/* 通用卡片表面：利落圆角 + 藏青柔光阴影 */
+.card-surface {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 6px 24px rgba(30, 58, 95, 0.08);
+  border: 1px solid #f0eee8;
 }
 
 /* 靛蓝渐变背景 */
@@ -129,9 +138,11 @@ html, body {
   background-color: #fdfcfa;
 }
 
-/* 输入框聚焦效果 */
+/* 输入框聚焦辉光 */
 input:focus, select:focus, textarea:focus {
   outline: none;
+  border-color: #1e3a5f;
+  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.15);
 }
 
 /* 简易柱状图动画 */

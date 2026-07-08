@@ -16,7 +16,7 @@ export default function StudentCard({ student, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 card-hover cursor-pointer flex flex-col items-center text-center"
+      className="card-surface p-5 card-hover cursor-pointer flex flex-col items-center text-center"
     >
       {/* 头像 */}
       <img
