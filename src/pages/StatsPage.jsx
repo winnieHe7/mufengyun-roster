@@ -51,17 +51,17 @@ export default function StatsPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <button
           onClick={() => navigate('/')}
-          className="flex items-center gap-1 text-sm text-primary-500 hover:text-primary-700 mb-5 transition-colors"
+          className="flex items-center gap-1 text-sm text-gray-400 hover:text-primary-600 mb-4"
         >
           <ArrowLeft size={16} />
           返回首页
         </button>
 
-        <h1 className="text-2xl font-bold text-gray-800 mb-6 tracking-tight">数据统计分析</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">数据统计分析</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* 按届别分布 */}
-          <div className="card-surface p-6">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="text-primary-500" size={20} />
               <h2 className="text-base font-semibold text-gray-800">按入学年级分布</h2>
@@ -70,7 +70,7 @@ export default function StatsPage() {
               {byYear.map(([year, count]) => (
                 <div key={year} className="flex items-center gap-3">
                   <span className="text-sm text-gray-600 w-16 flex-shrink-0">{year}级</span>
-                  <div className="flex-1 bg-warm-200 rounded-full h-6 relative overflow-hidden">
+                  <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
                     <div
                       className="gradient-header h-6 rounded-full bar-chart-bar flex items-center justify-end pr-2"
                       style={{ width: `${(count / maxYear) * 100}%` }}
@@ -84,7 +84,7 @@ export default function StatsPage() {
           </div>
 
           {/* 按行业分布 */}
-          <div className="card-surface p-6">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="text-primary-500" size={20} />
               <h2 className="text-base font-semibold text-gray-800">按行业分布</h2>
@@ -93,10 +93,10 @@ export default function StatsPage() {
               {byIndustry.map(([industry, count]) => (
                 <div key={industry} className="flex items-center gap-3">
                   <span className="text-sm text-gray-600 w-24 flex-shrink-0 truncate">{industry}</span>
-                  <div className="flex-1 bg-warm-200 rounded-full h-6 relative overflow-hidden">
+                  <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
                     <div
                       className="h-6 rounded-full bar-chart-bar flex items-center justify-end pr-2"
-                      style={{ width: `${(count / maxIndustry) * 100}%`, backgroundColor: '#4aabf4' }}
+                      style={{ width: `${(count / maxIndustry) * 100}%`, backgroundColor: '#537590' }}
                     >
                       <span className="text-xs text-white font-medium">{count}</span>
                     </div>
@@ -107,7 +107,7 @@ export default function StatsPage() {
           </div>
 
           {/* 城市排行 */}
-          <div className="card-surface p-6">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-4">
               <Trophy className="text-amber-500" size={20} />
               <h2 className="text-base font-semibold text-gray-800">城市分布 Top 10</h2>
@@ -124,10 +124,10 @@ export default function StatsPage() {
                     {i + 1}
                   </span>
                   <span className="text-sm text-gray-600 w-16 flex-shrink-0">{city}</span>
-                  <div className="flex-1 bg-warm-200 rounded-full h-6 relative overflow-hidden">
+                  <div className="flex-1 bg-gray-100 rounded-full h-6 relative overflow-hidden">
                     <div
                       className="h-6 rounded-full bar-chart-bar flex items-center justify-end pr-2"
-                      style={{ width: `${(count / maxCity) * 100}%`, backgroundColor: '#86aeff' }}
+                      style={{ width: `${(count / maxCity) * 100}%`, backgroundColor: '#7e98ac' }}
                     >
                       <span className="text-xs text-white font-medium">{count}</span>
                     </div>

@@ -10,7 +10,7 @@ export default function HeroSection() {
   const navigate = useNavigate()
 
   return (
-    <div className="hero-bg rounded-xl overflow-hidden mb-6 shadow-soft-lg">
+    <div className="hero-bg rounded-2xl overflow-hidden mb-6">
       <div className="relative z-10 p-6 md:p-8">
         {/* 团队标题 */}
         <div className="text-center mb-6">

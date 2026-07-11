@@ -16,13 +16,13 @@ export default function StudentCard({ student, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="card-surface p-5 card-hover cursor-pointer flex flex-col items-center text-center min-h-[244px]"
+      className="card-surface p-5 card-hover cursor-pointer flex flex-col items-center text-center"
     >
       {/* 头像 */}
       <img
         src={avatarUrl}
         alt={student.name}
-        className="w-20 h-20 rounded-full border-2 border-primary-300 mb-3 ring-4 ring-primary-50"
+        className="w-20 h-20 rounded-full border-2 border-primary-200 mb-3"
         loading="lazy"
       />
 
@@ -30,10 +30,10 @@ export default function StudentCard({ student, onClick }) {
       <h3 className="text-lg font-bold text-primary-600 mb-1">{student.name}</h3>
 
       {/* 专业 */}
-      <p className="text-sm text-gray-500 mb-2 truncate max-w-full">{student.major || '—'}</p>
+      <p className="text-sm text-gray-500 mb-2">{student.major}</p>
 
       {/* 城市 · 单位 */}
-      <div className="flex items-center justify-center gap-1 text-xs text-gray-400 mb-3 flex-wrap min-h-5">
+      <div className="flex items-center justify-center gap-1 text-xs text-gray-400 mb-3 flex-wrap">
         {student.city && (
           <span className="flex items-center gap-0.5">
             <MapPin size={12} />
