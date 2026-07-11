@@ -72,16 +72,19 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
         aria-label={`${student.name}的详细信息`}
       >
         {/* 顶部渐变背景 + 头像 */}
-        <div className="gradient-header h-28 flex-shrink-0 rounded-t-xl relative">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+          <div className="gradient-header h-32 flex-shrink-0 rounded-t-xl relative">
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="关闭详细信息"
+              className="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
+            >
+              <X size={22} />
+            </button>
+          </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 pb-6">
+          <div className="px-4 sm:px-6 pb-6">
           {/* 头像 + 姓名 */}
           <div className="flex items-end gap-4 -mt-12 mb-4">
             <img
@@ -187,6 +190,7 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
               下一条
               <ChevronRight size={16} />
             </button>
+          </div>
           </div>
         </div>
       </div>

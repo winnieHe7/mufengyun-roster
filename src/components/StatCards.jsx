@@ -67,7 +67,7 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
         <button
           type="button"
           onClick={onViewFullStats}
-          className="card-surface min-h-[148px] p-5 card-hover text-center flex flex-col items-center justify-center text-primary-600 hover:text-primary-700 transition-colors"
+          className="min-h-[148px] p-5 card-hover text-center flex flex-col items-center justify-center text-primary-600 hover:text-primary-700 transition-colors bg-transparent border border-transparent shadow-none"
           aria-label="查看完整统计"
         >
           <div className="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center mx-auto mb-2">
