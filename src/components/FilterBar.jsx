@@ -2,7 +2,7 @@ import { Filter, RotateCcw, ChevronDown } from 'lucide-react'
 
 /**
  * 多维度组合筛选栏组件
- * 支持入学年级、学历层次、所在城市、所属行业、在校状态的组合筛选
+ * 支持入学年级、学历层次、工作城市、所属行业、在校状态的组合筛选
  * @param {Object} props
  * @param {Object} props.filters - 当前筛选条件
  * @param {Function} props.onFilterChange - 筛选条件变更回调
@@ -65,9 +65,9 @@ export default function FilterBar({ filters, onFilterChange, onReset, onConfirm,
           </div>
         </div>
 
-        {/* 所在城市 */}
+        {/* 工作城市 */}
         <div className={wrapperClass}>
-          <label className="block text-xs text-gray-400 mb-1">所在城市</label>
+          <label className="block text-xs text-gray-400 mb-1">工作城市</label>
           <div className="relative">
             <select
               value={filters.city}
@@ -121,12 +121,14 @@ export default function FilterBar({ filters, onFilterChange, onReset, onConfirm,
         {/* 操作按钮 */}
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={onConfirm}
             className="px-5 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
           >
             确认筛选
           </button>
           <button
+            type="button"
             onClick={onReset}
             className="flex items-center gap-1 px-4 py-2 bg-warm-100 hover:bg-warm-200 text-gray-600 text-sm font-medium rounded-lg transition-colors"
           >

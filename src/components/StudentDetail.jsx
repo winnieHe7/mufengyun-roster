@@ -11,14 +11,14 @@ import { useAuth } from '../context/AuthContext.jsx'
  * @param {Function} props.onPrev - 上一条
  * @param {Function} props.onNext - 下一条
  */
-export default function StudentDetail({ student, onClose, onPrev, onNext }) {
+export default function StudentDetail({ student, onClose, onPrev, onNext, canGoPrev = true, canGoNext = true }) {
   const { currentUser, getPrivacy } = useAuth()
 
   const handleKeyDown = useCallback((e) => {
-    if (e.key === 'ArrowLeft') onPrev()
-    else if (e.key === 'ArrowRight') onNext()
+    if (e.key === 'ArrowLeft' && canGoPrev) onPrev()
+    else if (e.key === 'ArrowRight' && canGoNext) onNext()
     else if (e.key === 'Escape') onClose()
-  }, [onPrev, onNext, onClose])
+  }, [onPrev, onNext, onClose, canGoPrev, canGoNext])
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown)
@@ -43,9 +43,9 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
   const InfoRow = ({ icon: Icon, label, value }) => (
     <div className="flex items-start gap-3 py-2">
       <Icon className="text-gray-400 mt-0.5 flex-shrink-0" size={16} />
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <span className="text-xs text-gray-400">{label}</span>
-        <p className="text-sm text-gray-700">{value || '—'}</p>
+        <p className="text-sm text-gray-700 break-words">{value || '—'}</p>
       </div>
     </div>
   )
@@ -60,15 +60,19 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay"
       onClick={onClose}
+      role="presentation"
     >
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 z-0 bg-black/40" />
 
       <div
-        className="relative bg-white rounded-xl shadow-soft-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto modal-content"
+        className="relative z-10 bg-white rounded-xl shadow-soft-xl w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-hidden flex flex-col modal-content"
         onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${student.name}的详细信息`}
       >
         {/* 顶部渐变背景 + 头像 */}
-        <div className="gradient-header h-28 rounded-t-xl relative">
+        <div className="gradient-header h-28 flex-shrink-0 rounded-t-xl relative">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
@@ -77,7 +81,7 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
           </button>
         </div>
 
-        <div className="px-6 pb-6">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 pb-6">
           {/* 头像 + 姓名 */}
           <div className="flex items-end gap-4 -mt-12 mb-4">
             <img
@@ -112,15 +116,15 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
 
           {/* 基础身份信息 */}
           <SectionTitle>基础身份信息</SectionTitle>
-          <div className="grid grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
             <InfoRow icon={User} label="性别" value={student.gender} />
             <InfoRow icon={Users} label="民族" value={student.ethnicity} />
-            <InfoRow icon={MapPin} label="籍贯" value={student.hometown} />
+            <InfoRow icon={MapPin} label="籍贯城市" value={student.hometown} />
           </div>
 
           {/* 学业履历信息 */}
           <SectionTitle>学业履历信息</SectionTitle>
-          <div className="grid grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
             <InfoRow icon={Calendar} label="入学年级" value={student.enrollYear ? `${student.enrollYear}级` : ''} />
             <InfoRow icon={BookOpen} label="学历层次" value={student.degree || '硕士研究生'} />
             <InfoRow icon={Calendar} label="毕业年份" value={student.graduateYear ? `${student.graduateYear}年` : ''} />
@@ -130,16 +134,16 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
 
           {/* 就业发展信息 */}
           <SectionTitle>就业发展信息</SectionTitle>
-          <div className="grid grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
             <InfoRow icon={Building2} label="工作单位" value={student.company} />
             <InfoRow icon={Briefcase} label="所属行业" value={student.industry} />
-            <InfoRow icon={MapPin} label="所在城市" value={student.city} />
+            <InfoRow icon={MapPin} label="工作城市" value={student.city} />
             <InfoRow icon={Briefcase} label="岗位" value={student.position} />
           </div>
 
           {/* 联系方式 */}
           <SectionTitle>联系与补充信息</SectionTitle>
-          <div className="grid grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4">
             {canSeePhone ? (
               <InfoRow icon={Phone} label="手机号码" value={student.phone} />
             ) : (
@@ -165,10 +169,11 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
           </div>
 
           {/* 切换按钮 */}
-          <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-6 pt-4 border-t border-gray-100">
             <button
               onClick={onPrev}
-              className="flex items-center gap-1 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+              disabled={!canGoPrev}
+              className="flex items-center gap-1 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600"
             >
               <ChevronLeft size={16} />
               上一条
@@ -176,7 +181,8 @@ export default function StudentDetail({ student, onClose, onPrev, onNext }) {
             <span className="text-xs text-gray-400">← / → 键盘切换 · ESC 关闭</span>
             <button
               onClick={onNext}
-              className="flex items-center gap-1 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+              disabled={!canGoNext}
+              className="flex items-center gap-1 px-4 py-2 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600"
             >
               下一条
               <ChevronRight size={16} />

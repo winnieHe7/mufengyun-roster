@@ -72,7 +72,7 @@ export default function AdminPage() {
   }
 
   const handleExportAll = () => {
-    const headers = ['姓名', '性别', '民族', '籍贯', '入学年份', '毕业年份', '状态', '学历', '专业', '工作单位', '行业', '城市', '岗位', '手机号', '邮箱', '简介']
+    const headers = ['姓名', '性别', '民族', '籍贯城市', '入学年份', '毕业年份', '状态', '学历', '专业', '工作单位', '行业', '工作城市', '岗位', '手机号', '邮箱', '简介']
     const rows = students.map(s => [
       s.name, s.gender, s.ethnicity, s.hometown, s.enrollYear, s.graduateYear, s.status, s.degree,
       s.major, s.company, s.industry, s.city, s.position, s.phone, s.email, s.bio,
@@ -194,7 +194,7 @@ export default function AdminPage() {
         <input type="text" value={studentForm.ethnicity} onChange={e => setStudentForm({...studentForm, ethnicity: e.target.value})} className={inputClass} />
       </div>
       <div>
-        <label className="block text-sm text-gray-500 mb-1">籍贯</label>
+        <label className="block text-sm text-gray-500 mb-1">籍贯城市</label>
         <input type="text" value={studentForm.hometown} onChange={e => setStudentForm({...studentForm, hometown: e.target.value})} className={inputClass} placeholder="如 山东济南" />
       </div>
       <div>
@@ -233,7 +233,7 @@ export default function AdminPage() {
         <input type="text" value={studentForm.industry} onChange={e => setStudentForm({...studentForm, industry: e.target.value})} className={inputClass} placeholder="如 IT互联网" />
       </div>
       <div>
-        <label className="block text-sm text-gray-500 mb-1">所在城市</label>
+        <label className="block text-sm text-gray-500 mb-1">工作城市</label>
         <input type="text" value={studentForm.city} onChange={e => setStudentForm({...studentForm, city: e.target.value})} className={inputClass} placeholder="如 重庆" />
       </div>
       <div>
@@ -359,7 +359,7 @@ export default function AdminPage() {
                 <table className="w-full roster-table">
                   <thead>
                     <tr>
-                      <th>姓名</th><th>专业</th><th>年级</th><th>学历</th><th>城市</th><th>行业</th><th>状态</th><th>操作</th>
+                      <th>姓名</th><th>专业</th><th>年级</th><th>学历</th><th>工作城市</th><th>行业</th><th>状态</th><th>操作</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -458,7 +458,7 @@ export default function AdminPage() {
                     <input type="number" value={newAccount.graduateYear} onChange={e => setNewAccount({...newAccount, graduateYear: e.target.value})} className={inputClass} placeholder="如 2026" />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500 mb-1">籍贯</label>
+                    <label className="block text-sm text-gray-500 mb-1">籍贯城市</label>
                     <input type="text" value={newAccount.hometown} onChange={e => setNewAccount({...newAccount, hometown: e.target.value})} className={inputClass} placeholder="如 山东济南" />
                   </div>
                   <div>
@@ -466,7 +466,7 @@ export default function AdminPage() {
                     <input type="text" value={newAccount.major} onChange={e => setNewAccount({...newAccount, major: e.target.value})} className={inputClass} placeholder="如 测绘工程" />
                   </div>
                   <div>
-                    <label className="block text-sm text-gray-500 mb-1">所在城市</label>
+                    <label className="block text-sm text-gray-500 mb-1">工作城市</label>
                     <input type="text" value={newAccount.city} onChange={e => setNewAccount({...newAccount, city: e.target.value})} className={inputClass} placeholder="如 重庆" />
                   </div>
                   <div>

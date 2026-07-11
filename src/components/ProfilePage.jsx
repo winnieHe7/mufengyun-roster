@@ -332,7 +332,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 gap-x-4">
             <InfoRow icon={User} label="姓名" value={currentUser.name} field="name" {...rowProps} />
             <InfoRow icon={Users} label="性别" value={currentUser.gender} field="gender" {...rowProps} options={['男', '女']} />
-            <InfoRow icon={MapPin} label="籍贯" value={currentUser.hometown} field="hometown" {...rowProps} />
+            <InfoRow icon={MapPin} label="籍贯城市" value={currentUser.hometown} field="hometown" {...rowProps} />
             <InfoRow icon={Calendar} label="入学年份" value={currentUser.enrollYear} field="enrollYear" type="number" {...rowProps} />
             <InfoRow icon={Calendar} label="毕业年份" value={currentUser.graduateYear} field="graduateYear" type="number" {...rowProps} />
             <InfoRow icon={BookOpen} label="专业" value={currentUser.major} field="major" {...rowProps} />
@@ -342,7 +342,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 gap-x-4">
             <InfoRow icon={Building2} label="工作单位" value={currentUser.company} field="company" {...rowProps} />
             <InfoRow icon={Briefcase} label="所属行业" value={currentUser.industry} field="industry" {...rowProps} />
-            <InfoRow icon={MapPin} label="所在城市" value={currentUser.city} field="city" {...rowProps} />
+            <InfoRow icon={MapPin} label="工作城市" value={currentUser.city} field="city" {...rowProps} />
             <InfoRow icon={Briefcase} label="岗位" value={currentUser.position} field="position" {...rowProps} />
           </div>
 

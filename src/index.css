@@ -102,7 +102,8 @@ html, body {
 }
 
 .modal-content {
-  animation: slideUp 0.3s ease-out;
+  animation: modalSlideUp 0.2s ease-out;
+  isolation: isolate;
 }
 
 @keyframes fadeIn {
@@ -115,6 +116,11 @@ html, body {
   to { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes modalSlideUp {
+  from { transform: translateY(12px); }
+  to { transform: translateY(0); }
+}
+
 /* 表格样式 */
 .roster-table th {
   background-color: #f8f7f4;
@@ -124,6 +130,8 @@ html, body {
   border-bottom: 2px solid #e4e0d8;
   white-space: nowrap;
   color: #537590;
+  vertical-align: middle;
+  text-align: left;
 }
 
 .roster-table td {
@@ -132,6 +140,7 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
 .roster-table tbody tr:hover {

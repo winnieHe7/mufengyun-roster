@@ -8,6 +8,8 @@ import HeroSection from '../components/HeroSection.jsx'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 
+const EMPTY_FILTERS = { year: '', degree: '', city: '', industry: '', status: '' }
+
 /**
  * 首页组件
  * 整合搜索、统计卡片、筛选、花名册列表、详情弹窗
@@ -17,7 +19,8 @@ export default function HomePage() {
   const navigate = useNavigate()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [filters, setFilters] = useState({ year: '', degree: '', city: '', industry: '', status: '' })
+  const [draftFilters, setDraftFilters] = useState(EMPTY_FILTERS)
+  const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS)
   const [viewMode, setViewMode] = useState('card')
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [selectedIndex, setSelectedIndex] = useState(-1)
@@ -53,14 +56,14 @@ export default function HomePage() {
         if (!haystack.includes(q)) return false
       }
       // 筛选
-      if (filters.year && String(s.enrollYear) !== String(filters.year)) return false
-      if (filters.degree && s.degree !== filters.degree) return false
-      if (filters.city && s.city !== filters.city) return false
-      if (filters.industry && s.industry !== filters.industry) return false
-      if (filters.status && s.status !== filters.status) return false
+      if (appliedFilters.year && String(s.enrollYear) !== String(appliedFilters.year)) return false
+      if (appliedFilters.degree && s.degree !== appliedFilters.degree) return false
+      if (appliedFilters.city && s.city !== appliedFilters.city) return false
+      if (appliedFilters.industry && s.industry !== appliedFilters.industry) return false
+      if (appliedFilters.status && s.status !== appliedFilters.status) return false
       return true
     })
-  }, [students, searchQuery, filters])
+  }, [students, searchQuery, appliedFilters])
 
   // 统计数据
   const stats = useMemo(() => ({
@@ -72,10 +75,14 @@ export default function HomePage() {
 
   // 筛选操作
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }))
+    setDraftFilters(prev => ({ ...prev, [key]: value }))
+  }
+  const handleConfirm = () => {
+    setAppliedFilters({ ...draftFilters })
   }
   const handleReset = () => {
-    setFilters({ year: '', degree: '', city: '', industry: '', status: '' })
+    setDraftFilters({ ...EMPTY_FILTERS })
+    setAppliedFilters({ ...EMPTY_FILTERS })
     setSearchQuery('')
   }
 
@@ -104,7 +111,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <Header onSearch={setSearchQuery} searchQuery={searchQuery} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* 导师+团队简介 */}
         <HeroSection />
 
@@ -119,10 +126,10 @@ export default function HomePage() {
 
         {/* 筛选栏 */}
         <FilterBar
-          filters={filters}
+          filters={draftFilters}
           onFilterChange={handleFilterChange}
           onReset={handleReset}
-          onConfirm={() => {}}
+          onConfirm={handleConfirm}
           years={years}
           degrees={degrees}
           cities={cities}
@@ -157,6 +164,8 @@ export default function HomePage() {
           onClose={() => { setSelectedStudent(null); setSelectedIndex(-1) }}
           onPrev={handlePrev}
           onNext={handleNext}
+          canGoPrev={selectedIndex > 0}
+          canGoNext={selectedIndex >= 0 && selectedIndex < filteredStudents.length - 1}
         />
       )}
     </div>

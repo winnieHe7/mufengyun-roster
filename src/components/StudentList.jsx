@@ -39,7 +39,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
 
   // 导出CSV
   const handleExport = () => {
-    const headers = ['姓名', '性别', '民族', '籍贯', '入学年份', '毕业年份', '状态', '专业', '工作单位', '行业', '当前城市', '岗位', '手机号', '邮箱', '简介']
+    const headers = ['姓名', '性别', '民族', '籍贯城市', '入学年份', '毕业年份', '状态', '专业', '工作单位', '行业', '工作城市', '岗位', '手机号', '邮箱', '简介']
     const rows = students.map(s => [
       s.name, s.gender, s.ethnicity, s.hometown, s.enrollYear, s.graduateYear, s.status,
       s.major, s.company, s.industry, s.city, s.position, s.phone, s.email, s.bio,
@@ -125,16 +125,25 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
             </div>
           ) : (
             <div className="overflow-x-auto card-surface">
-              <table className="w-full roster-table table-fixed">
+              <table className="w-full min-w-[960px] roster-table table-fixed">
+                <colgroup>
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '14%' }} />
+                  <col style={{ width: '14%' }} />
+                  <col style={{ width: '16%' }} />
+                  <col style={{ width: '20%' }} />
+                  <col style={{ width: '10%' }} />
+                </colgroup>
                 <thead>
                   <tr>
-                    <th className="w-24">姓名</th>
-                    <th className="w-32">专业</th>
-                    <th className="w-28">籍贯</th>
-                    <th className="w-28">当前城市</th>
-                    <th className="w-28">行业</th>
-                    <th className="w-28">岗位</th>
-                    <th className="w-20">状态</th>
+                    <th>姓名</th>
+                    <th>专业</th>
+                    <th>籍贯城市</th>
+                    <th>工作城市</th>
+                    <th>行业</th>
+                    <th>岗位</th>
+                    <th>状态</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -144,12 +153,12 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
                       onClick={() => onStudentClick(student)}
                       className="cursor-pointer"
                     >
-                      <td className="font-medium text-primary-600">{student.name}</td>
-                      <td>{student.major}</td>
-                      <td>{student.hometown}</td>
-                      <td>{student.city}</td>
-                      <td>{student.industry}</td>
-                      <td>{student.position}</td>
+                      <td className="font-medium text-primary-600" title={student.name}>{student.name || '—'}</td>
+                      <td title={student.major}>{student.major || '—'}</td>
+                      <td title={student.hometown}>{student.hometown || '—'}</td>
+                      <td title={student.city}>{student.city || '—'}</td>
+                      <td title={student.industry}>{student.industry || '—'}</td>
+                      <td title={student.position}>{student.position || '—'}</td>
                       <td>
                         <span className={`status-tag ${student.status === '已毕业' ? 'status-tag-graduated' : 'status-tag-active'}`}>
                           {student.status}
