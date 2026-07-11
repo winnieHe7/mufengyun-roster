@@ -17,18 +17,18 @@ export default function FilterBar({ filters, onFilterChange, onReset, onConfirm,
   const statusOptions = ['全部', '在读', '已毕业']
 
   const selectClass =
-    'appearance-none bg-white border border-warm-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-700 focus:border-primary-400 transition-all cursor-pointer'
+    'appearance-none bg-white border border-warm-200 rounded-lg px-3 py-2.5 pr-8 text-sm text-gray-700 focus:border-primary-400 transition-all cursor-pointer min-h-10'
 
-  const wrapperClass = 'flex-1 min-w-[130px]'
+  const wrapperClass = 'min-w-0'
 
   return (
-    <div className="card-surface p-4">
+    <div className="card-surface p-4 sm:p-5">
       <div className="flex items-center gap-2 mb-3">
         <Filter className="text-accent-400" size={18} />
         <span className="text-sm font-semibold text-gray-700">多维度筛选</span>
       </div>
 
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-6 items-end gap-3">
         {/* 入学年级 */}
         <div className={wrapperClass}>
           <label className="block text-xs text-gray-400 mb-1">入学年级</label>
@@ -119,18 +119,18 @@ export default function FilterBar({ filters, onFilterChange, onReset, onConfirm,
         </div>
 
         {/* 操作按钮 */}
-        <div className="flex gap-2">
+        <div className="col-span-2 lg:col-span-1 flex gap-2">
           <button
             type="button"
             onClick={onConfirm}
-            className="px-5 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors"
           >
             确认筛选
           </button>
           <button
             type="button"
             onClick={onReset}
-            className="flex items-center gap-1 px-4 py-2 bg-warm-100 hover:bg-warm-200 text-gray-600 text-sm font-medium rounded-lg transition-colors"
+            className="flex items-center justify-center gap-1 px-3 py-2.5 bg-white hover:bg-warm-100 border border-warm-300 text-gray-600 text-sm font-medium rounded-lg transition-colors"
           >
             <RotateCcw size={14} />
             重置

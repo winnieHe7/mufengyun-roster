@@ -103,14 +103,15 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
       {/* 分组展示 */}
       {grouped.map(group => (
         <div key={`${group.year}-${group.degree}`} className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <h3 className="text-base font-semibold text-gray-700">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px bg-gray-200" />
+            <h3 className="text-lg font-bold text-gray-800 text-center whitespace-nowrap">
               {group.year}级{group.degree}
             </h3>
-            <span className="px-2 py-0.5 bg-primary-50 text-primary-600 text-xs font-medium rounded-full">
+            <span className="text-sm text-gray-400 whitespace-nowrap">
               共{group.students.length}人
             </span>
-            <div className="flex-1 h-px bg-gray-100" />
+            <div className="flex-1 h-px bg-gray-200" />
           </div>
 
           {viewMode === 'card' ? (

@@ -61,7 +61,7 @@ export const mentorInfo = {
     '中济通奖教金',
   ],
   contact: {
-    email: 'moufy@cqjtu.edu.cn',
+    email: 'mfysd@cqjtu.edu.cn',
     office: '重庆交通大学',
   },
 }

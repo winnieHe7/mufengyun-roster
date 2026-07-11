@@ -14,9 +14,9 @@ html, body {
   font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(160deg, #f8f7f4 0%, #f2f5f8 55%, #eef1f5 100%);
+  background: #f7f9fc;
   background-attachment: fixed;
-  color: #2d2d2d;
+  color: #1f2937;
 }
 
 /* 自定义滚动条 */
@@ -26,16 +26,16 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f0eee8;
+  background: #edf1f7;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1ccc0;
+  background: #cbd5e3;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b8b0a0;
+  background: #a8b4c5;
 }
 
 /* 卡片 hover 上浮效果 */
@@ -44,31 +44,31 @@ html, body {
 }
 
 .card-hover:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(30, 58, 95, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(58, 107, 243, 0.12);
 }
 
 /* 通用卡片表面：利落圆角 + 藏青柔光阴影 */
 .card-surface {
   background-color: #ffffff;
-  border-radius: 0.5rem;
-  box-shadow: 0 6px 24px rgba(30, 58, 95, 0.08);
-  border: 1px solid #f0eee8;
+  border-radius: 0.625rem;
+  box-shadow: 0 4px 18px rgba(58, 107, 243, 0.06);
+  border: 1px solid #e5eaf1;
 }
 
 /* 靛蓝渐变背景 */
 .gradient-header {
-  background: linear-gradient(135deg, #1e3a5f 0%, #2a4a73 100%);
+  background: linear-gradient(135deg, #3a6bf3 0%, #4aabf4 100%);
 }
 
 /* 金色点缀渐变 */
 .gradient-accent {
-  background: linear-gradient(135deg, #c9a96e 0%, #d2b288 100%);
+  background: linear-gradient(135deg, #3a6bf3 0%, #4aabf4 100%);
 }
 
 /* 靛蓝→金色装饰线 */
 .divider-accent {
-  background: linear-gradient(90deg, #1e3a5f 0%, #c9a96e 100%);
+  background: linear-gradient(90deg, #3a6bf3 0%, #4aabf4 100%);
 }
 
 /* 状态标签 */
@@ -123,20 +123,20 @@ html, body {
 
 /* 表格样式 */
 .roster-table th {
-  background-color: #f8f7f4;
+  background-color: #f7f9fc;
   font-weight: 600;
   text-align: left;
   padding: 12px 16px;
-  border-bottom: 2px solid #e4e0d8;
+  border-bottom: 1px solid #e5eaf1;
   white-space: nowrap;
-  color: #537590;
+  color: #475569;
   vertical-align: middle;
   text-align: left;
 }
 
 .roster-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid #f0eee8;
+  border-bottom: 1px solid #edf1f7;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -144,7 +144,7 @@ html, body {
 }
 
 .roster-table tbody tr:hover {
-  background-color: #fdfcfa;
+  background-color: #f8fbff;
 }
 
 /* 输入框聚焦辉光 */
