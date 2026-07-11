@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import { X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, Building2, Briefcase, Calendar, User, Users, BookOpen, FileText } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 
@@ -13,6 +13,7 @@ import { useAuth } from '../context/AuthContext.jsx'
  */
 export default function StudentDetail({ student, onClose, onPrev, onNext, canGoPrev = true, canGoNext = true }) {
   const { currentUser, getPrivacy } = useAuth()
+  const scrollContainerRef = useRef(null)
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'ArrowLeft' && canGoPrev) onPrev()
@@ -28,6 +29,13 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
       document.body.style.overflow = ''
     }
   }, [handleKeyDown])
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0
+      scrollContainerRef.current.scrollLeft = 0
+    }
+  }, [student?.id])
 
   if (!student) return null
 
@@ -72,29 +80,29 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
         aria-label={`${student.name}的详细信息`}
       >
         {/* 顶部渐变背景 + 头像 */}
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-          <div className="gradient-header h-32 flex-shrink-0 rounded-t-xl relative">
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="关闭详细信息"
-              className="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
-            >
-              <X size={22} />
-            </button>
-          </div>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="关闭详细信息"
+          className="absolute top-4 right-4 z-30 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
+        >
+          <X size={22} />
+        </button>
+
+        <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+          <div className="gradient-header h-24 flex-shrink-0 rounded-t-xl" />
 
           <div className="px-4 sm:px-6 pb-6">
           {/* 头像 + 姓名 */}
-          <div className="flex items-end gap-4 -mt-12 mb-4">
+          <div className="flex items-center gap-4 py-4 mb-4">
             <img
               src={avatarUrl}
               alt={student.name}
               className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
             />
-            <div className="pb-1">
-              <h2 className="text-2xl font-bold text-gray-800">{student.name}</h2>
-              <div className="flex items-center gap-2 mt-1">
+            <div className="min-w-0 pb-1">
+              <h2 className="text-2xl font-bold text-gray-800 break-words">{student.name}</h2>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
                 <span className={`status-tag ${student.status === '已毕业' ? 'status-tag-graduated' : 'status-tag-active'}`}>
                   {student.status}
                 </span>
