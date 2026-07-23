@@ -114,7 +114,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
           </div>
 
           {viewMode === 'card' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {group.students.map(student => (
                 <StudentCard
                   key={student.id}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Settings, Users, ToggleLeft, ToggleRight, Download, UserPlus, Trash2, KeyRound, Pencil, X, Save } from 'lucide-react'
 import Header from '../components/Header.jsx'
@@ -17,6 +17,17 @@ export default function AdminPage() {
   const [editingStudent, setEditingStudent] = useState(null)
   const [showAddStudent, setShowAddStudent] = useState(false)
   const [message, setMessage] = useState('')
+
+  // 关键字筛选
+  const [keyword, setKeyword] = useState('')
+  const filteredStudents = useMemo(() => {
+    if (!keyword.trim()) return students
+    const q = keyword.trim().toLowerCase()
+    return students.filter(s =>
+      [s.name, s.major, s.city, s.company, s.industry, s.position, s.email, s.phone, s.hometown]
+        .some(v => String(v || '').toLowerCase().includes(q))
+    )
+  }, [students, keyword])
 
   if (!currentUser) return <Navigate to="/login" replace />
   if (!isAdmin) return <Navigate to="/" replace />
@@ -318,9 +329,17 @@ export default function AdminPage() {
         {/* 花名册管理 */}
         {activeTab === 'students' && (
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-500">共 {students.length} 条学生记录</p>
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div className="relative w-full sm:max-w-xs">
+                <input
+                  type="text"
+                  value={keyword}
+                  onChange={e => setKeyword(e.target.value)}
+                  placeholder="关键字筛选：姓名 / 专业 / 城市 / 单位..."
+                  className="w-full pl-3 pr-3 py-2 bg-warm-100 border border-warm-200 rounded-lg text-sm focus:bg-white focus:border-primary-400 transition-all"
+                />
+              </div>
+              <div className="flex gap-2 flex-shrink-0">
                 <button
                   onClick={() => { setShowAddStudent(!showAddStudent); setEditingStudent(null); setStudentForm(emptyStudent) }}
                   className="flex items-center gap-1.5 px-4 py-2 text-sm text-white bg-accent-400 hover:bg-accent-500 rounded-lg transition-colors"
@@ -363,7 +382,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {students.map(student => (
+                    {filteredStudents.map(student => (
                       <tr key={student.id}>
                         <td className="font-medium text-primary-500">{student.name}</td>
                         <td>{student.major}</td>

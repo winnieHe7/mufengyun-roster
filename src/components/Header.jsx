@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, LogIn, LayoutDashboard, LogOut, User, Menu, X, Info } from 'lucide-react'
+import { Search, LogIn, LayoutDashboard, LogOut, User, Menu, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 
 /**
@@ -65,15 +65,6 @@ export default function Header({ onSearch, searchQuery }) {
 
           {/* 右侧操作区 - 桌面端 */}
           <div className="hidden md:flex items-center gap-4">
-            {/* 关于我们 */}
-            <Link
-              to="/about"
-              className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary-500 transition-colors"
-            >
-              <Info size={16} />
-              关于我们
-            </Link>
-
             {currentUser ? (
               <>
                 <div className="relative">
@@ -160,13 +151,6 @@ export default function Header({ onSearch, searchQuery }) {
         {/* 移动端菜单 */}
         {mobileMenuOpen && (
           <div className="md:hidden pb-3 space-y-2">
-            <Link
-              to="/about"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-4 py-2 text-sm text-gray-600 hover:bg-warm-100 rounded-lg"
-            >
-              关于我们
-            </Link>
             {currentUser ? (
               <>
                 <Link
