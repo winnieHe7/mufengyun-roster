@@ -36,6 +36,7 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
     {
       label: '就业覆盖城市',
       value: cities,
+      unit: '座',
       icon: MapPin,
       bg: 'bg-purple-50',
       text: 'text-purple-600',
@@ -56,7 +57,7 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
             </div>
             <div className={`text-3xl font-bold ${card.text}`}>
               {card.value}
-              <span className="text-base font-normal text-gray-400 ml-1">人</span>
+              <span className="text-base font-normal text-gray-400 ml-1">{card.unit || '人'}</span>
             </div>
             <div className="text-sm text-gray-500 mt-1">{card.label}</div>
           </div>

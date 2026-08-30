@@ -84,13 +84,13 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
           type="button"
           onClick={onClose}
           aria-label="关闭详细信息"
-          className="absolute top-4 right-4 z-30 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
+          className="absolute top-3 right-3 z-30 w-7 h-7 flex items-center justify-center bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors"
         >
-          <X size={22} />
+          <X size={16} />
         </button>
 
         <div ref={scrollContainerRef} className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
-          <div className="gradient-header h-24 flex-shrink-0 rounded-t-xl" />
+          <div className="gradient-header h-16 flex-shrink-0 rounded-t-xl" />
 
           <div className="px-4 sm:px-6 pb-6">
           {/* 头像 + 姓名 */}
