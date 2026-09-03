@@ -65,7 +65,7 @@ export default function LoginForm() {
               <div className="h-px w-10 bg-accent-400" />
             </div>
             <p className="text-gray-300 leading-relaxed max-w-sm">
-              牟凤云团队花名册，汇聚历届师友的求学与成长足迹。支持多维度筛选、可视化统计与数据导出，欢迎登录查看。
+              师门花名册汇聚历届师友的求学与成长足迹。支持多维度筛选、可视化统计与数据导出，欢迎登录查看。
             </p>
           </div>
         </div>

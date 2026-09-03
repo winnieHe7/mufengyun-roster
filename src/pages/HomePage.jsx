@@ -135,6 +135,8 @@ export default function HomePage() {
           degrees={degrees}
           cities={cities}
           industries={industries}
+          searchQuery={searchQuery}
+          onSearch={setSearchQuery}
         />
 
         {/* 学生列表 */}

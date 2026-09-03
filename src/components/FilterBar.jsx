@@ -13,7 +13,7 @@ import { Filter, RotateCcw, ChevronDown } from 'lucide-react'
  * @param {Array<string>} props.cities - 可选城市列表
  * @param {Array<string>} props.industries - 可选行业列表
  */
-export default function FilterBar({ filters, onFilterChange, onReset, onConfirm, years, degrees, cities, industries }) {
+export default function FilterBar({ filters, onFilterChange, onReset, onConfirm, years, degrees, cities, industries, searchQuery = '', onSearch }) {
   const statusOptions = ['全部', '在读', '已毕业']
 
   const selectClass =
@@ -25,11 +25,15 @@ export default function FilterBar({ filters, onFilterChange, onReset, onConfirm,
     <section className="card-surface px-4 py-3">
       <div className="flex items-center gap-2 mb-3">
         <Filter className="text-primary-500" size={17} />
-        <span className="text-sm font-medium text-gray-800">筛选学生</span>
-        <span className="text-xs text-gray-400">支持组合条件</span>
+        <span className="text-sm font-medium text-gray-800">筛选</span>
+        <span className="text-xs text-gray-400">关键词优先，支持组合条件</span>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
+        <div className="w-full md:flex-1 md:min-w-[220px]">
+          <label className="block text-xs text-gray-400 mb-1">关键词</label>
+          <input value={searchQuery} onChange={e => onSearch?.(e.target.value)} placeholder="姓名 / 专业 / 城市 / 单位" className="w-full h-9 bg-white border border-gray-200 rounded-lg px-3 text-sm text-gray-700 focus:border-primary-400 transition-all" />
+        </div>
         {/* 入学年级 */}
         <div className={wrapperClass}>
           <label className="block text-xs text-gray-400 mb-1">入学年级</label>
