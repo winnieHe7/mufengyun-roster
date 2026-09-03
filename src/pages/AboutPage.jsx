@@ -14,7 +14,7 @@ export default function AboutPage() {
     <div className="min-h-screen">
       <Header />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <button
           onClick={() => navigate('/')}
           className="flex items-center gap-1 text-sm text-gray-400 hover:text-primary-500 mb-6"
@@ -24,11 +24,11 @@ export default function AboutPage() {
         </button>
 
         {/* ===== 导师简介 ===== */}
-        <section className="bg-white rounded-2xl shadow-sm border border-warm-200 overflow-hidden mb-6">
+        <section className="card-surface overflow-hidden mb-5">
           <div className="h-2 divider-accent" />
 
           <div className="p-6 md:p-8">
-            <h1 className="text-2xl font-bold text-primary-500 section-title mb-6">导师简介</h1>
+            <h1 className="text-xl font-medium text-gray-900 section-title mb-6">导师完整档案</h1>
 
             {/* 导师头部 */}
             <div className="flex flex-col md:flex-row gap-6 mb-8">
@@ -137,11 +137,11 @@ export default function AboutPage() {
         </section>
 
         {/* ===== 团队简介 ===== */}
-        <section className="bg-white rounded-2xl shadow-sm border border-warm-200 overflow-hidden mb-6">
+        <section className="card-surface overflow-hidden mb-5">
           <div className="h-2 divider-accent" />
 
           <div className="p-6 md:p-8">
-            <h1 className="text-2xl font-bold text-primary-500 section-title mb-6">团队简介</h1>
+            <h1 className="text-xl font-medium text-gray-900 section-title mb-6">团队简介</h1>
 
             {/* 团队概要 */}
             <div className="mb-8">

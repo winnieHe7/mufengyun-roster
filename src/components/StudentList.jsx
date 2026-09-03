@@ -33,7 +33,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
       })
       .map(([key, list]) => {
         const [year, degree] = key.split('-')
-        return { year: Number(year), degree: degree || '研究生', students: list }
+        return { year: Number(year), degree: degree || '研究生', students: [...list].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'zh-CN')) }
       })
   }, [students])
 
@@ -64,24 +64,24 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
   }
 
   return (
-    <div>
+    <section className="card-surface overflow-hidden">
       {/* 工具栏 */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-gray-800">
-          学生花名册列表
-          <span className="text-sm font-normal text-gray-400 ml-2">（按毕业届别分组）</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
+        <h2 className="text-base font-medium text-gray-900">
+          学生花名册
+          <span className="text-xs font-normal text-gray-400 ml-2">共 {students.length} 人 · 按入学年级倒序</span>
         </h2>
         <div className="flex items-center gap-3">
           {canExport && (
             <button
               onClick={handleExport}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
             >
               <Download size={16} />
               导出CSV
             </button>
           )}
-          <div className="flex items-center bg-gray-100 rounded-lg p-0.5">
+          <div className="flex items-center bg-gray-100 rounded-lg p-0.5" aria-label="切换列表视图">
             <button
               onClick={() => onViewModeChange('card')}
               className={`p-1.5 rounded-md transition-colors ${viewMode === 'card' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-400'}`}
@@ -100,21 +100,30 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
         </div>
       </div>
 
+      {grouped.length > 1 && (
+        <nav className="flex items-center gap-2 px-5 py-3 overflow-x-auto border-b border-gray-100 bg-gray-50/70" aria-label="届别快速导航">
+          <span className="text-xs text-gray-400 flex-shrink-0">快速定位</span>
+          {grouped.map(group => (
+            <a key={`${group.year}-${group.degree}`} href={`#year-${group.year}-${group.degree}`} className="flex-shrink-0 px-3 py-1 text-xs text-primary-600 bg-white border border-primary-100 rounded-full hover:border-primary-400">
+              {group.year}级 · {group.students.length}
+            </a>
+          ))}
+        </nav>
+      )}
+
       {/* 分组展示 */}
       {grouped.map(group => (
-        <div key={`${group.year}-${group.degree}`} className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <h3 className="text-base font-semibold text-gray-700">
+        <div key={`${group.year}-${group.degree}`} id={`year-${group.year}-${group.degree}`} className="py-5 scroll-mt-32">
+          <div className="flex items-center gap-3 px-5 mb-3">
+            <h3 className="text-sm font-semibold text-gray-800">
               {group.year}级{group.degree}
             </h3>
-            <span className="px-2 py-0.5 bg-primary-50 text-primary-600 text-xs font-medium rounded-full">
-              共{group.students.length}人
-            </span>
+            <span className="text-xs text-gray-400">{group.students.length} 人 · 全量展示</span>
             <div className="flex-1 h-px bg-gray-100" />
           </div>
 
           {viewMode === 'card' ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 px-5">
               {group.students.map(student => (
                 <StudentCard
                   key={student.id}
@@ -124,7 +133,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
               ))}
             </div>
           ) : (
-            <div className="overflow-x-auto card-surface">
+            <div className="overflow-x-auto mx-5 border border-gray-200 rounded-lg">
               <table className="w-full min-w-[960px] roster-table table-fixed">
                 <colgroup>
                   <col style={{ width: '10%' }} />
@@ -172,6 +181,6 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
           )}
         </div>
       ))}
-    </div>
+    </section>
   )
 }

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Award, BookOpen, Users, Calendar } from 'lucide-react'
+import { ArrowRight, MapPin } from 'lucide-react'
 import { mentorInfo, teamInfo } from '../data/siteInfo.js'
 
 /**
@@ -10,80 +10,21 @@ export default function HeroSection() {
   const navigate = useNavigate()
 
   return (
-    <div className="hero-bg rounded-2xl overflow-hidden mb-6">
-      <div className="relative z-10 p-6 md:p-8">
-        {/* 团队标题 */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-            {teamInfo.name}
-          </h1>
-          <div className="flex items-center justify-center gap-2">
-            <div className="h-px w-12 bg-accent-400/60" />
-            <span className="text-sm text-accent-400 tracking-widest">{teamInfo.slogan}</span>
-            <div className="h-px w-12 bg-accent-400/60" />
+    <section className="hero-bg rounded-xl border border-primary-100 overflow-hidden">
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 px-5 py-4">
+        <img src={mentorInfo.avatar} alt={mentorInfo.name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm" />
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-lg font-medium text-gray-900">{mentorInfo.name}</h1>
+            <span className="px-2 py-0.5 text-[11px] text-primary-600 bg-white border border-primary-200 rounded">{mentorInfo.title}</span>
           </div>
+          <p className="text-sm text-gray-600 mt-1 line-clamp-1">{mentorInfo.research.slice(0, 4).join(' · ')}</p>
+          <p className="flex items-center gap-1 text-xs text-gray-500 mt-1"><MapPin size={12} />{mentorInfo.contact.office} · {teamInfo.slogan}</p>
         </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* 导师简介卡片 */}
-          <div
-            onClick={() => navigate('/about')}
-            className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10 hover:bg-white/15 transition-all cursor-pointer group"
-          >
-            <div className="flex items-center gap-4 mb-3">
-              <img
-                src={mentorInfo.avatar}
-                alt={mentorInfo.name}
-                className="w-16 h-16 rounded-full border-2 border-accent-400/50"
-              />
-              <div>
-                <h2 className="text-lg font-bold text-white">{mentorInfo.name}</h2>
-                <p className="text-xs text-accent-400">{mentorInfo.title}</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-300 leading-relaxed line-clamp-3">
-              {mentorInfo.bio}
-            </p>
-            <div className="flex flex-wrap gap-1.5 mt-3">
-              {mentorInfo.research.slice(0, 3).map((r, i) => (
-                <span key={i} className="px-2 py-0.5 bg-accent-400/20 text-accent-400 text-xs rounded-full">
-                  {r}
-                </span>
-              ))}
-            </div>
-            <div className="flex items-center gap-1 mt-3 text-xs text-accent-400 group-hover:gap-2 transition-all">
-              查看导师详情
-              <ArrowRight size={12} />
-            </div>
-          </div>
-
-          {/* 团队简介卡片 */}
-          <div
-            onClick={() => navigate('/about')}
-            className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/10 hover:bg-white/15 transition-all cursor-pointer group"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Users className="text-accent-400" size={20} />
-              <h2 className="text-lg font-bold text-white">团队简介</h2>
-            </div>
-            <p className="text-sm text-gray-300 leading-relaxed line-clamp-3">
-              {teamInfo.description}
-            </p>
-            <div className="grid grid-cols-4 gap-2 mt-3">
-              {teamInfo.stats.map((s, i) => (
-                <div key={i} className="text-center">
-                  <p className="text-lg font-bold text-accent-400">{s.value}</p>
-                  <p className="text-[10px] text-gray-400">{s.label}</p>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-1 mt-3 text-xs text-accent-400 group-hover:gap-2 transition-all">
-              查看团队详情
-              <ArrowRight size={12} />
-            </div>
-          </div>
-        </div>
+        <button onClick={() => navigate('/about')} className="self-start sm:self-auto flex items-center gap-1 px-3 py-2 text-sm text-primary-600 bg-white border border-primary-200 rounded-lg hover:border-primary-400 transition-colors">
+          完整档案 <ArrowRight size={14} />
+        </button>
       </div>
-    </div>
+    </section>
   )
 }

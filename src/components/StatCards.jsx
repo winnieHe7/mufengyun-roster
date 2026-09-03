@@ -44,39 +44,39 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
   ]
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+    <section className="card-surface overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-4">
       {cards.map((card, index) => {
         const Icon = card.icon
         return (
           <div
             key={index}
-            className="card-surface min-h-[148px] p-5 card-hover text-center flex flex-col items-center justify-center"
+            className={`px-4 py-4 flex items-center justify-between gap-3 ${index % 2 === 0 ? 'border-r' : ''} ${index < 2 ? 'border-b lg:border-b-0' : ''} lg:border-r lg:last:border-r-0 border-gray-100`}
           >
-            <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center mx-auto mb-2`}>
-              <Icon className={card.text} size={20} />
+            <div>
+              <div className="text-xs text-gray-500 mb-1">{card.label}</div>
+              <div className="text-2xl font-medium text-gray-900">
+                {card.value}<span className="text-xs font-normal text-gray-400 ml-1">{card.unit || '人'}</span>
+              </div>
             </div>
-            <div className={`text-3xl font-bold ${card.text}`}>
-              {card.value}
-              <span className="text-base font-normal text-gray-400 ml-1">{card.unit || '人'}</span>
+            <div className={`w-9 h-9 rounded-lg ${card.bg} flex items-center justify-center`}>
+              <Icon className={card.text} size={18} />
             </div>
-            <div className="text-sm text-gray-500 mt-1">{card.label}</div>
           </div>
         )
       })}
 
+      </div>
       {onViewFullStats && (
         <button
           type="button"
           onClick={onViewFullStats}
-          className="min-h-[148px] p-5 card-hover text-center flex flex-col items-center justify-center text-primary-600 hover:text-primary-700 transition-colors bg-transparent border border-transparent shadow-none"
+          className="w-full flex items-center justify-center gap-2 py-2.5 text-xs text-primary-600 bg-gray-50 border-t border-gray-100 hover:bg-primary-50 transition-colors"
           aria-label="查看完整统计"
         >
-          <div className="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center mx-auto mb-2">
-            <TrendingUp size={20} />
-          </div>
-          <div className="text-sm font-medium">查看完整统计</div>
+          <TrendingUp size={15} /><span>查看完整统计</span>
         </button>
       )}
-    </div>
+    </section>
   )
 }

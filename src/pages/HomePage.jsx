@@ -5,7 +5,7 @@ import FilterBar from '../components/FilterBar.jsx'
 import StudentList from '../components/StudentList.jsx'
 import StudentDetail from '../components/StudentDetail.jsx'
 import HeroSection from '../components/HeroSection.jsx'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const EMPTY_FILTERS = { year: '', degree: '', city: '', industry: '', status: '' }
@@ -17,8 +17,9 @@ const EMPTY_FILTERS = { year: '', degree: '', city: '', industry: '', status: ''
 export default function HomePage() {
   const { students, isAdmin, currentUser } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
   const [draftFilters, setDraftFilters] = useState(EMPTY_FILTERS)
   const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS)
   const [viewMode, setViewMode] = useState('card')
@@ -111,7 +112,7 @@ export default function HomePage() {
     <div className="min-h-screen">
       <Header onSearch={setSearchQuery} searchQuery={searchQuery} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-4">
         {/* 导师+团队简介 */}
         <HeroSection />
 
@@ -147,13 +148,13 @@ export default function HomePage() {
       </main>
 
       {/* 页脚 */}
-      <footer className="border-t border-warm-200 bg-white mt-12">
+      <footer className="border-t border-gray-200 bg-white mt-10">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center">
-          <p className="text-sm font-medium text-primary-500">牟凤云团队</p>
+          <p className="text-sm font-medium text-gray-700">牟凤云团队 · 师门花名册</p>
           <p className="text-xs text-gray-400 mt-1">
             账号由管理员统一分发 · 支持多维度筛选、可视化统计、数据导出
           </p>
-          <p className="text-xs text-gray-300 mt-2">© 2026 牟凤云团队 · 粤ICP备2026001234号</p>
+          <p className="text-xs text-gray-300 mt-2">© 2026 牟凤云团队</p>
         </div>
       </footer>
 

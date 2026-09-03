@@ -280,7 +280,7 @@ export default function AdminPage() {
     <div className="min-h-screen">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
         <button
           onClick={() => navigate('/')}
           className="flex items-center gap-1 text-sm text-gray-400 hover:text-primary-500 mb-4"
@@ -289,13 +289,13 @@ export default function AdminPage() {
           返回首页
         </button>
 
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-lg gradient-header flex items-center justify-center text-white">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="w-9 h-9 rounded-lg bg-gray-900 flex items-center justify-center text-white">
             <Settings size={20} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-primary-500">管理后台</h1>
-            <p className="text-sm text-gray-400">花名册系统管理中心</p>
+            <h1 className="text-xl font-medium text-gray-900">管理后台</h1>
+            <p className="text-xs text-gray-400">花名册系统管理中心</p>
           </div>
         </div>
 
@@ -306,17 +306,17 @@ export default function AdminPage() {
         )}
 
         {/* Tab 切换 */}
-        <div className="flex gap-2 mb-6 border-b border-warm-200">
+        <div className="flex gap-1 mb-6 p-1.5 bg-gray-900 rounded-xl overflow-x-auto">
           {tabs.map(tab => {
             const Icon = tab.icon
             return (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
                   activeTab === tab.key
-                    ? 'border-accent-400 text-primary-500'
-                    : 'border-transparent text-gray-400 hover:text-gray-600'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <Icon size={16} />

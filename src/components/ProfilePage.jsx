@@ -233,10 +233,10 @@ export default function ProfilePage() {
         </button>
       )}
 
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto px-4 py-6">
         {/* 标题 + 操作按钮 */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">个人中心</h1>
+          <div><h1 className="text-xl font-medium text-gray-900">我的资料</h1><p className="text-xs text-gray-400 mt-1">维护个人档案、隐私与账号安全</p></div>
           <div className="flex gap-2">
             {editing ? (
               <button
@@ -263,7 +263,7 @@ export default function ProfilePage() {
         )}
 
         {/* 信息完善度进度条 */}
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mb-6">
+        <div className="card-surface p-5 mb-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-600">信息完善度</span>
             <span className="text-sm font-bold text-primary-600">{completeness}%</span>
@@ -280,7 +280,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 个人信息卡片 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+        <div className="card-surface p-6 mb-5">
           <div className="flex items-center gap-4 mb-6">
             {/* 头像 + 编辑模式上传 */}
             <div className="relative flex-shrink-0">
@@ -360,7 +360,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 隐私设置 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+        <div className="card-surface p-6 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <Shield className="text-primary-500" size={20} />
             <h3 className="text-base font-semibold text-gray-800">隐私设置</h3>
@@ -403,7 +403,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 账号安全 */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="card-surface p-6">
           <div className="flex items-center gap-2 mb-4">
             <KeyRound className="text-primary-500" size={20} />
             <h3 className="text-base font-semibold text-gray-800">账号安全</h3>
