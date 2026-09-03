@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Mail, MapPin, Award, BookOpen, Calendar, Briefcase, Users, Target, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import { mentorInfo, teamInfo } from '../data/siteInfo.js'
+import { useAuth } from '../context/AuthContext.jsx'
 
 /**
  * 关于我们页面
@@ -9,6 +10,8 @@ import { mentorInfo, teamInfo } from '../data/siteInfo.js'
  */
 export default function AboutPage() {
   const navigate = useNavigate()
+  const { students } = useAuth()
+  const cohorts = [...new Set((students || []).map(s => s.enrollYear).filter(Boolean))].sort((a, b) => b - a)
 
   return (
     <div className="min-h-screen">
@@ -27,20 +30,20 @@ export default function AboutPage() {
         <section className="card-surface overflow-hidden mb-5">
           <div className="h-2 divider-accent" />
 
-          <div className="p-6 md:p-8">
-            <h1 className="text-xl font-medium text-gray-900 section-title mb-6">导师完整档案</h1>
+          <div className="p-4 md:p-8">
+            <div className="mb-6 flex items-center justify-between gap-3"><div><p className="text-xs uppercase tracking-[0.18em] text-accent-500">MENTOR PROFILE</p><h1 className="mt-1 text-xl font-medium text-gray-900 section-title">导师完整档案</h1></div><span className="hidden rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs text-primary-600 sm:inline-flex">只读档案 · A4维护</span></div>
 
             {/* 导师头部 */}
-            <div className="flex flex-col md:flex-row gap-6 mb-8">
+            <div className="grid gap-5 rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/80 to-white p-4 md:grid-cols-[150px_1fr] md:p-5 mb-8">
               <img
                 src={mentorInfo.avatar}
                 alt={mentorInfo.name}
-                className="w-32 h-32 rounded-2xl border-2 border-accent-400/30 flex-shrink-0"
+                className="h-32 w-32 rounded-2xl border-4 border-white object-cover shadow-md"
               />
               <div className="flex-1">
                 <h2 className="text-2xl font-bold text-gray-800">{mentorInfo.name}</h2>
                 <p className="text-accent-400 font-medium mt-1">{mentorInfo.title}</p>
-                <p className="text-sm text-gray-500 leading-relaxed mt-3">{mentorInfo.bio}</p>
+                <p className="text-sm text-gray-600 leading-relaxed mt-3">{mentorInfo.bio}</p>
 
                 <div className="flex flex-wrap gap-4 mt-4">
                   <span className="flex items-center gap-1.5 text-sm text-gray-500">
@@ -54,6 +57,8 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+            <div className="mb-7 grid gap-2 sm:grid-cols-3"><div className="rounded-lg border border-gray-100 bg-gray-50/70 p-3"><p className="text-xs text-gray-400">职务</p><p className="mt-1 text-sm font-medium text-gray-700">{mentorInfo.title}</p></div><div className="rounded-lg border border-gray-100 bg-gray-50/70 p-3"><p className="text-xs text-gray-400">办公地点</p><p className="mt-1 text-sm font-medium text-gray-700">{mentorInfo.contact.office}</p></div><div className="rounded-lg border border-gray-100 bg-gray-50/70 p-3"><p className="text-xs text-gray-400">指导届次</p><p className="mt-1 text-sm font-medium text-gray-700">{cohorts.length ? cohorts.length + ' 个年级' : '持续更新中'}</p></div></div>
+            <div className="mb-7"><h3 className="text-base font-semibold text-primary-500 section-title mb-3">指导学生届次</h3><div className="flex flex-wrap gap-2">{(cohorts.length ? cohorts : ['历届校友']).map(year => <span key={year} className="rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs text-primary-600">{year === '历届校友' ? year : year + '级'}</span>)}</div></div>
 
             {/* 研究方向 */}
             <div className="mb-6">

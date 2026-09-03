@@ -34,9 +34,9 @@ export default function LoginForm() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="flex-1 flex items-stretch">
+      <div className="flex-1 flex items-center justify-center bg-warm-50 px-4 py-10">
         {/* 左侧品牌面板（大屏） */}
-        <div className="hidden md:flex md:w-1/2 gradient-header relative overflow-hidden p-12 flex-col justify-center text-white">
+        <div className="hidden">
           {/* 云纹装饰 */}
           <svg
             className="absolute -right-16 -top-10 w-96 h-96 opacity-10 pointer-events-none"
@@ -71,24 +71,23 @@ export default function LoginForm() {
         </div>
 
         {/* 右侧表单 */}
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-md">
-            <Link to="/" className="hidden md:flex items-center gap-1 text-sm text-gray-400 hover:text-primary-500 mb-6">
+        <div className="w-full max-w-md">
+            <Link to="/" className="flex items-center gap-1 text-sm text-gray-400 hover:text-primary-500 mb-4">
               <ArrowLeft size={16} />
               返回首页
             </Link>
 
             {/* 移动端品牌条 */}
-            <div className="md:hidden mb-6 text-center">
+            <div className="mb-6 text-center">
               <div className="w-12 h-12 rounded-2xl gradient-header flex items-center justify-center text-white text-xl font-bold mx-auto mb-3">
                 牟
               </div>
               <h1 className="text-lg font-bold text-primary-500">{teamInfo.name}</h1>
             </div>
 
-            <div className="card-surface p-8">
+            <div className="card-surface border border-gray-100 p-6 shadow-soft-xl sm:p-8">
               <div className="text-center mb-6">
-                <div className="hidden md:flex w-14 h-14 rounded-xl gradient-header items-center justify-center text-white mx-auto mb-3">
+                <div className="flex w-14 h-14 rounded-xl gradient-header items-center justify-center text-white mx-auto mb-3">
                   <LogIn size={28} />
                 </div>
                 <h2 className="text-xl font-bold text-primary-500">登录花名册</h2>
@@ -145,8 +144,7 @@ export default function LoginForm() {
             )}
           </div>
         </div>
-      </div>
-      </div>
+    </div>
     </div>
   )
 }
