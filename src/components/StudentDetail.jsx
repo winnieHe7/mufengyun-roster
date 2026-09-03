@@ -60,13 +60,13 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
       <div className="absolute inset-0 bg-slate-950/50" />
       <div className="relative z-10 flex h-full max-h-screen w-full flex-col overflow-hidden rounded-none border border-gray-200 bg-white shadow-soft-xl sm:h-auto sm:max-h-[calc(100dvh-2.5rem)] sm:max-w-5xl sm:rounded-xl" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={`${student.name}的详细信息`}>
         <div className="flex h-[50px] shrink-0 items-center border-b border-gray-100 bg-white px-4 md:hidden">
-          <button type="button" onClick={onClose} aria-label="返回花名册" className="inline-flex min-h-10 items-center gap-1 text-sm text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-200"><ChevronLeft size={18} /><span>花名册</span><span className="text-gray-300">/</span><span className="text-gray-500">{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span></button>
+          <button type="button" onClick={onClose} aria-label="返回同门星图" className="inline-flex min-h-10 items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-200"><span aria-hidden="true" className="text-xl font-light leading-none text-gray-500">‹</span><span className="font-medium text-gray-800">同门星图</span><span className="text-gray-300">/</span><span className="text-gray-400">{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span></button>
         </div>
         <button type="button" onClick={onClose} aria-label="关闭详细信息" className="absolute right-3 top-3 z-30 hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-300 md:flex md:right-4 md:top-4"><X size={17} /></button>
 
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
           <div className="hidden border-b border-gray-100 bg-gray-50/80 px-7 py-3.5 pr-20 md:block">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-400"><span>花名册</span><span aria-hidden="true">/</span><span>{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span><span aria-hidden="true">/</span><span className="max-w-full break-words text-gray-600">{student.name}</span></div>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-400"><span>同门星图</span><span aria-hidden="true">/</span><span>{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span><span aria-hidden="true">/</span><span className="max-w-full break-words text-gray-600">{student.name}</span></div>
           </div>
 
           <div className="px-4 py-4 sm:px-7 sm:py-6">
@@ -90,7 +90,7 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
               </div>
             </div>
 
-            <div className="mt-5 flex flex-col-reverse gap-1.5 border-t border-gray-100 pt-3 sm:flex-row sm:items-center sm:justify-between"><button type="button" onClick={onPrev} disabled={!canGoPrev} className="inline-flex min-h-9 items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs text-gray-500 transition hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-40"><ChevronLeft size={15} />上一条</button><span className="text-center text-[11px] text-gray-400">← / → 切换档案 · ESC 关闭</span><button type="button" onClick={onNext} disabled={!canGoNext} className="inline-flex min-h-9 items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs text-gray-500 transition hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-40">下一条<ChevronRight size={15} /></button></div>
+            <div className="mt-5 flex items-center gap-2 border-t border-gray-100 pt-3 sm:justify-between"><button type="button" onClick={onPrev} disabled={!canGoPrev} className="inline-flex min-h-10 flex-1 items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs text-gray-500 transition hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-40 sm:min-h-9 sm:flex-none"><ChevronLeft size={15} />上一条</button><span className="hidden text-center text-[11px] text-gray-400 sm:inline">← / → 切换档案 · ESC 关闭</span><button type="button" onClick={onNext} disabled={!canGoNext} className="inline-flex min-h-10 flex-1 items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs text-gray-500 transition hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-200 disabled:opacity-40 sm:min-h-9 sm:flex-none">下一条<ChevronRight size={15} /></button></div>
           </div>
         </div>
       </div>

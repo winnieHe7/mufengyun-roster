@@ -53,7 +53,7 @@ export default function Header({ onSearch, searchQuery }) {
               册
             </div>
             <span className="hidden sm:inline text-base font-medium text-gray-900">
-              师门花名册
+              同门星图
             </span>
           </Link>
 

@@ -65,7 +65,7 @@ export default function LoginForm() {
               <div className="h-px w-10 bg-accent-400" />
             </div>
             <p className="text-gray-300 leading-relaxed max-w-sm">
-              师门花名册汇聚历届师友的求学与成长足迹。支持多维度筛选、可视化统计与数据导出，欢迎登录查看。
+              同门星图汇聚历届师友的求学与成长足迹。支持多维度筛选、可视化统计与数据导出，欢迎登录查看。
             </p>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function LoginForm() {
               <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center text-white text-xl font-semibold mx-auto mb-3 shadow-sm">
                 册
               </div>
-              <h1 className="text-lg font-semibold text-primary-700">师门花名册</h1>
+              <h1 className="text-lg font-semibold text-primary-700">同门星图</h1>
             </div>
 
             <div className="card-surface border border-gray-100 p-6 shadow-soft-xl sm:p-7">
@@ -90,7 +90,7 @@ export default function LoginForm() {
                 <div className="flex w-12 h-12 rounded-xl bg-primary-500 items-center justify-center text-white mx-auto mb-3">
                   <LogIn size={28} />
                 </div>
-                <h2 className="text-lg font-semibold text-primary-700">登录花名册</h2>
+                <h2 className="text-lg font-semibold text-primary-700">登录同门星图</h2>
                 <p className="text-sm text-gray-400 mt-1">账号由管理员统一分发</p>
               </div>
 

@@ -9,6 +9,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 
 const EMPTY_FILTERS = { year: '', degree: '', city: '', industry: '', status: '' }
+const DEGREE_ORDER = { '博士研究生': 0, '硕士研究生': 1, '本科生': 2 }
+const compareStudentsForRoster = (a, b) => {
+  const yearDiff = Number(b.enrollYear || 0) - Number(a.enrollYear || 0)
+  if (yearDiff !== 0) return yearDiff
+  const degreeDiff = (DEGREE_ORDER[a.degree || '硕士研究生'] ?? 9) - (DEGREE_ORDER[b.degree || '硕士研究生'] ?? 9)
+  if (degreeDiff !== 0) return degreeDiff
+  return (a.name || '').localeCompare(b.name || '', 'zh-CN')
+}
 
 /**
  * 首页组件
@@ -63,7 +71,7 @@ export default function HomePage() {
       if (appliedFilters.industry && s.industry !== appliedFilters.industry) return false
       if (appliedFilters.status && s.status !== appliedFilters.status) return false
       return true
-    })
+    }).sort(compareStudentsForRoster)
   }, [students, searchQuery, appliedFilters])
 
   // 统计数据
@@ -152,7 +160,7 @@ export default function HomePage() {
       {/* 页脚 */}
       <footer className="border-t border-gray-200 bg-white mt-10">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center">
-          <p className="text-sm font-medium text-gray-700">牟凤云团队 · 师门花名册</p>
+          <p className="text-sm font-medium text-gray-700">牟凤云团队 · 同门星图</p>
           <p className="text-xs text-gray-400 mt-1">
             账号由管理员统一分发 · 支持多维度筛选、可视化统计、数据导出
           </p>
