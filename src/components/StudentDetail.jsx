@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { X, ChevronLeft, ChevronRight, Phone, Mail, MapPin, Building2, Briefcase, Calendar, User, Users, BookOpen, FileText, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
+import { createInitialAvatar, getStableAvatarSource, handleAvatarError } from '../utils/avatar.js'
 
 export default function StudentDetail({ student, onClose, onPrev, onNext, canGoPrev = true, canGoNext = true }) {
   const { currentUser, getPrivacy } = useAuth()
@@ -13,7 +14,7 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
   useEffect(() => { document.addEventListener('keydown', handleKeyDown); document.body.style.overflow = 'hidden'; return () => { document.removeEventListener('keydown', handleKeyDown); document.body.style.overflow = '' } }, [handleKeyDown])
   useEffect(() => { if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0 }, [student?.id])
   if (!student) return null
-  const avatarUrl = student.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1e3a5f&color=fff&size=200`
+  const avatarUrl = getStableAvatarSource(student.avatar) || createInitialAvatar(student.name, 200)
   const privacy = getPrivacy(student.id)
   const isLoggedIn = !!currentUser
   const isAdmin = currentUser?.role === 'admin'
@@ -24,12 +25,12 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
   return <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5 modal-overlay" onClick={onClose} role="presentation"><div className="absolute inset-0 bg-slate-950/50" />
     <div className="relative z-10 flex max-h-[calc(100dvh-1.5rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-soft-xl" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={`${student.name}的详细信息`}>
       <button type="button" onClick={onClose} aria-label="关闭详细信息" className="absolute right-5 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white transition hover:bg-white/35 sm:right-8"><X size={17} /></button>
-      <div className="gradient-header relative flex min-h-12 h-[clamp(3rem,8vw,4.5rem)] shrink-0 items-center px-4 sm:px-8">
-        <span className="text-sm font-semibold tracking-wide text-white sm:text-base">详情</span>
-      </div>
-      <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+      <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+        <div className="gradient-header relative flex min-h-12 h-[clamp(3rem,8vw,4.5rem)] shrink-0 items-center px-4 sm:px-8">
+          <span className="text-sm font-semibold tracking-wide text-white sm:text-base">详情</span>
+        </div>
         <div className="px-4 pb-6 sm:px-8">
-          <div className="-mt-8 mb-4 flex flex-wrap items-end justify-between gap-3"><div className="flex items-end gap-4"><img src={avatarUrl} onError={e => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=1e3a5f&color=fff&size=200` }} alt={student.name} className="h-20 w-20 rounded-2xl border-4 border-white object-cover shadow-lg" /><div className="pb-1"><div className="mb-1 text-xs text-gray-400">花名册 / {student.enrollYear ? `${student.enrollYear}级` : '校友'} / {student.name}</div><h2 className="text-2xl font-bold text-gray-900">{student.name}</h2><div className="mt-1 flex flex-wrap gap-2"><span className={`status-tag ${student.status === '已毕业' ? 'status-tag-graduated' : 'status-tag-active'}`}>{student.status}</span>{student.company && <span className="status-tag status-tag-employment">{student.industry === '升学深造' ? '深造中' : '在职'}</span>}</div></div></div><span className="hidden items-center gap-1.5 text-xs text-gray-400 sm:flex"><ShieldCheck size={15} className="text-accent-500" />档案信息按隐私设置展示</span></div>
+          <div className="relative z-10 -mt-8 mb-4 flex flex-wrap items-end justify-between gap-3"><div className="flex min-w-0 items-end gap-3 sm:gap-4"><img src={avatarUrl} onError={e => handleAvatarError(e, student.name, 200)} alt={student.name} className="h-20 w-20 shrink-0 rounded-2xl border-4 border-white object-cover shadow-lg" /><div className="min-w-0 pb-1"><div className="mb-1 break-words pr-8 text-xs text-gray-400 sm:pr-0">花名册 / {student.enrollYear ? `${student.enrollYear}级` : '校友'}<span className="hidden sm:inline"> / {student.name}</span></div><h2 className="break-words text-2xl font-bold text-gray-900">{student.name}</h2><div className="mt-1 flex flex-wrap gap-2"><span className={`status-tag ${student.status === '已毕业' ? 'status-tag-graduated' : 'status-tag-active'}`}>{student.status}</span>{student.company && <span className="status-tag status-tag-employment">{student.industry === '升学深造' ? '深造中' : '在职'}</span>}</div></div></div><span className="hidden items-center gap-1.5 text-xs text-gray-400 sm:flex"><ShieldCheck size={15} className="text-accent-500" />档案信息按隐私设置展示</span></div>
           <div className="mb-5 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-800"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-amber-600" />联系方式及部分个人信息受隐私设置保护，{isLoggedIn ? '当前账号可查看已授权内容。' : '登录后可查看已授权内容。'}</div>
           {student.bio && <div className="mb-5 flex items-start gap-2 rounded-xl bg-primary-50/70 p-4 text-sm leading-relaxed text-gray-600"><FileText size={16} className="mt-0.5 shrink-0 text-primary-500" />{student.bio}</div>}
           <Section title="基本信息"><div className="grid gap-2 sm:grid-cols-3"><Info icon={User} label="性别" value={student.gender} /><Info icon={Users} label="民族" value={student.ethnicity} /><Info icon={MapPin} label="籍贯城市" value={student.hometown} /></div></Section>

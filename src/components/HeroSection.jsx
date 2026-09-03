@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, MapPin } from 'lucide-react'
 import { mentorInfo, teamInfo } from '../data/siteInfo.js'
+import { handleAvatarError } from '../utils/avatar.js'
 
 /**
  * 首页顶部 Hero 区
@@ -12,7 +13,7 @@ export default function HeroSection() {
   return (
     <section className="hero-bg rounded-xl border border-primary-100 overflow-hidden">
       <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 px-5 py-4">
-        <img src={mentorInfo.avatar} alt={mentorInfo.name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm" />
+        <img src={mentorInfo.avatar} onError={(event) => handleAvatarError(event, mentorInfo.name)} alt={mentorInfo.name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm" />
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-lg font-medium text-gray-900">{mentorInfo.name}</h1>

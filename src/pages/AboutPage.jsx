@@ -3,6 +3,7 @@ import { ArrowLeft, Mail, MapPin, Award, BookOpen, Calendar, Briefcase, Users, T
 import Header from '../components/Header.jsx'
 import { mentorInfo, teamInfo } from '../data/siteInfo.js'
 import { useAuth } from '../context/AuthContext.jsx'
+import { handleAvatarError } from '../utils/avatar.js'
 
 /**
  * 关于我们页面
@@ -37,6 +38,7 @@ export default function AboutPage() {
             <div className="grid gap-5 rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/80 to-white p-4 md:grid-cols-[150px_1fr] md:p-5 mb-8">
               <img
                 src={mentorInfo.avatar}
+                onError={(event) => handleAvatarError(event, mentorInfo.name, 256)}
                 alt={mentorInfo.name}
                 className="h-32 w-32 rounded-2xl border-4 border-white object-cover shadow-md"
               />

@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users, KeyRound, LogIn, Camera, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import Header from './Header.jsx'
+import { createInitialAvatar, getStableAvatarSource, handleAvatarError } from '../utils/avatar.js'
 
 /**
  * 压缩图片到指定尺寸
@@ -285,7 +286,8 @@ export default function ProfilePage() {
             {/* 头像 + 编辑模式上传 */}
             <div className="relative flex-shrink-0">
               <img
-                src={form.avatar || currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=1e3a5f&color=fff&size=128`}
+                src={getStableAvatarSource(form.avatar || currentUser.avatar) || createInitialAvatar(currentUser.name)}
+                onError={(event) => handleAvatarError(event, currentUser.name)}
                 alt={currentUser.name}
                 className="w-20 h-20 rounded-full border-2 border-primary-100 object-cover"
               />

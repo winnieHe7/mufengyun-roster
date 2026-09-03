@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Search, LogIn, LayoutDashboard, LogOut, User, Menu, X, BarChart3 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
+import { createInitialAvatar, getStableAvatarSource, handleAvatarError } from '../utils/avatar.js'
 
 /**
  * 顶部导航栏组件
@@ -84,7 +85,8 @@ export default function Header({ onSearch, searchQuery }) {
                     className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <img
-                      src={currentUser.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=1e3a5f&color=fff`}
+                      src={getStableAvatarSource(currentUser.avatar) || createInitialAvatar(currentUser.name)}
+                      onError={(event) => handleAvatarError(event, currentUser.name)}
                       alt={currentUser.name}
                       className="w-8 h-8 rounded-full"
                     />
@@ -140,6 +142,9 @@ export default function Header({ onSearch, searchQuery }) {
           <button
             className="md:hidden p-2 text-gray-600"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? '关闭导航菜单' : '打开导航菜单'}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation-menu"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -162,7 +167,7 @@ export default function Header({ onSearch, searchQuery }) {
 
         {/* 移动端菜单 */}
         {mobileMenuOpen && (
-          <div className="md:hidden pb-3 space-y-2">
+          <div id="mobile-navigation-menu" className="md:hidden pb-3 space-y-2">
             <Link to="/stats" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">统计报表</Link>
             {currentUser ? (
               <>
