@@ -29,7 +29,7 @@ export default function AboutPage() {
 
         {/* ===== 导师简介 ===== */}
         <section className="card-surface overflow-hidden mb-5">
-          <div className="h-2 divider-accent" />
+          <div className="h-px bg-primary-500" />
 
           <div className="p-4 md:p-8">
             <div className="mb-6 flex items-center justify-between gap-3"><div><p className="text-xs uppercase tracking-[0.18em] text-accent-500">MENTOR PROFILE</p><h1 className="mt-1 text-xl font-medium text-gray-900 section-title">导师完整档案</h1></div><span className="hidden rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs text-primary-600 sm:inline-flex">只读档案 · A4维护</span></div>
@@ -67,7 +67,7 @@ export default function AboutPage() {
               <h3 className="text-base font-semibold text-primary-500 section-title mb-3">研究方向</h3>
               <div className="flex flex-wrap gap-2">
                 {mentorInfo.research.map((r, i) => (
-                  <span key={i} className="px-3 py-1.5 bg-accent-50 text-accent-600 text-sm rounded-lg border border-accent-100">
+                  <span key={i} className="rounded-lg border border-primary-100 bg-primary-50 px-3 py-1.5 text-sm text-primary-700">
                     {r}
                   </span>
                 ))}
@@ -145,7 +145,7 @@ export default function AboutPage() {
 
         {/* ===== 团队简介 ===== */}
         <section className="card-surface overflow-hidden mb-5">
-          <div className="h-2 divider-accent" />
+          <div className="h-px bg-primary-500" />
 
           <div className="p-6 md:p-8">
             <h1 className="text-xl font-medium text-gray-900 section-title mb-6">团队简介</h1>

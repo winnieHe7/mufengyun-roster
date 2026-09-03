@@ -221,15 +221,14 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen">
       <Header />
-      {/* 悬浮保存按钮 - 编辑模式下紧贴内容框右侧，垂直居中跟随滚动 */}
+      {/* 编辑模式下的保存按钮：移动端固定在底部，桌面端贴近内容区 */}
       {editing && (
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{ right: 'max(1rem, calc((100vw - 48rem) / 2 - 3.25rem))' }}
-          className="fixed top-1/2 -translate-y-1/2 z-50 flex flex-col items-center justify-center gap-1.5 px-5 py-4 text-white bg-primary-500 hover:bg-primary-600 rounded-2xl shadow-xl shadow-primary-500/30 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+          className="fixed bottom-4 right-4 z-50 flex flex-row items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-3 text-white shadow-xl shadow-primary-500/30 transition-all hover:bg-primary-600 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 sm:bottom-auto sm:right-[max(1rem,calc((100vw-48rem)/2-3.25rem))] sm:top-1/2 sm:-translate-y-1/2 sm:flex-col sm:gap-1.5 sm:rounded-2xl sm:px-5 sm:py-4"
         >
-          <Save size={22} />
+          <Save size={20} />
           <span className="text-sm font-medium">{saving ? '保存中' : '保存'}</span>
         </button>
       )}
@@ -264,7 +263,7 @@ export default function ProfilePage() {
         )}
 
         {/* 信息完善度进度条 */}
-        <div className="card-surface p-5 mb-5">
+        <div className="card-surface mb-5 p-4 sm:p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-600">信息完善度</span>
             <span className="text-sm font-bold text-primary-600">{completeness}%</span>
@@ -281,7 +280,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 个人信息卡片 */}
-        <div className="card-surface p-6 mb-5">
+        <div className="card-surface mb-5 p-4 sm:p-6">
           <div className="flex items-center gap-4 mb-6">
             {/* 头像 + 编辑模式上传 */}
             <div className="relative flex-shrink-0">
@@ -331,7 +330,7 @@ export default function ProfilePage() {
           </div>
 
           <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2">基础信息</h3>
-          <div className="grid grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <InfoRow icon={User} label="姓名" value={currentUser.name} field="name" {...rowProps} />
             <InfoRow icon={Users} label="性别" value={currentUser.gender} field="gender" {...rowProps} options={['男', '女']} />
             <InfoRow icon={MapPin} label="籍贯城市" value={currentUser.hometown} field="hometown" {...rowProps} />
@@ -341,7 +340,7 @@ export default function ProfilePage() {
           </div>
 
           <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2 mt-4">就业信息</h3>
-          <div className="grid grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <InfoRow icon={Building2} label="工作单位" value={currentUser.company} field="company" {...rowProps} />
             <InfoRow icon={Briefcase} label="所属行业" value={currentUser.industry} field="industry" {...rowProps} />
             <InfoRow icon={MapPin} label="工作城市" value={currentUser.city} field="city" {...rowProps} />
@@ -349,7 +348,7 @@ export default function ProfilePage() {
           </div>
 
           <h3 className="text-sm font-semibold text-gray-500 border-b border-gray-100 pb-2 mb-2 mt-4">联系方式</h3>
-          <div className="grid grid-cols-2 gap-x-4">
+          <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
             <InfoRow icon={Phone} label="手机号" value={currentUser.phone} field="phone" {...rowProps} />
             <InfoRow icon={Mail} label="邮箱" value={currentUser.email} field="email" {...rowProps} />
           </div>
@@ -362,7 +361,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 隐私设置 */}
-        <div className="card-surface p-6 mb-5">
+        <div className="card-surface mb-5 p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <Shield className="text-primary-500" size={20} />
             <h3 className="text-base font-semibold text-gray-800">隐私设置</h3>
@@ -405,7 +404,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 账号安全 */}
-        <div className="card-surface p-6">
+        <div className="card-surface p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <KeyRound className="text-primary-500" size={20} />
             <h3 className="text-base font-semibold text-gray-800">账号安全</h3>
@@ -418,7 +417,7 @@ export default function ProfilePage() {
               <LogIn className="text-gray-400" size={16} />
               <span className="text-sm font-medium text-gray-700">修改登录账号</span>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <input
                 type="text"
                 value={newLoginAccount}

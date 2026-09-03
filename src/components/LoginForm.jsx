@@ -71,7 +71,7 @@ export default function LoginForm() {
         </div>
 
         {/* 右侧表单 */}
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-[372px]">
             <Link to="/" className="flex items-center gap-1 text-sm text-gray-400 hover:text-primary-500 mb-4">
               <ArrowLeft size={16} />
               返回首页
@@ -79,18 +79,18 @@ export default function LoginForm() {
 
             {/* 移动端品牌条 */}
             <div className="mb-6 text-center">
-              <div className="w-12 h-12 rounded-2xl gradient-header flex items-center justify-center text-white text-xl font-bold mx-auto mb-3">
-                牟
+              <div className="w-12 h-12 rounded-xl bg-primary-500 flex items-center justify-center text-white text-xl font-semibold mx-auto mb-3 shadow-sm">
+                册
               </div>
-              <h1 className="text-lg font-bold text-primary-500">{teamInfo.name}</h1>
+              <h1 className="text-lg font-semibold text-primary-700">师门花名册</h1>
             </div>
 
-            <div className="card-surface border border-gray-100 p-6 shadow-soft-xl sm:p-8">
+            <div className="card-surface border border-gray-100 p-6 shadow-soft-xl sm:p-7">
               <div className="text-center mb-6">
-                <div className="flex w-14 h-14 rounded-xl gradient-header items-center justify-center text-white mx-auto mb-3">
+                <div className="flex w-12 h-12 rounded-xl bg-primary-500 items-center justify-center text-white mx-auto mb-3">
                   <LogIn size={28} />
                 </div>
-                <h2 className="text-xl font-bold text-primary-500">登录花名册</h2>
+                <h2 className="text-lg font-semibold text-primary-700">登录花名册</h2>
                 <p className="text-sm text-gray-400 mt-1">账号由管理员统一分发</p>
               </div>
 

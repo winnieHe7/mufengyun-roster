@@ -60,7 +60,7 @@ export default function StatsPage() {
     <div className="min-h-screen">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate('/')}
           className="flex items-center gap-1 text-sm text-gray-400 hover:text-primary-600 mb-4"
@@ -82,8 +82,8 @@ export default function StatsPage() {
           ))}
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="card-surface p-6">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <div className="card-surface p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-5"><BarChart3 className="text-primary-500" size={20} /><h2 className="text-base font-medium text-gray-800">在校状态构成</h2></div>
             <div className="flex items-center justify-center gap-8 py-4">
               <div className="relative w-36 h-36 rounded-full" style={{ background: `conic-gradient(#185FA5 0 ${activePercent}%, #FAC775 ${activePercent}% 100%)` }}>
@@ -93,7 +93,7 @@ export default function StatsPage() {
             </div>
           </div>
           {/* 按届别分布 */}
-          <div className="card-surface p-6">
+          <div className="card-surface p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="text-primary-500" size={20} />
               <h2 className="text-base font-medium text-gray-800">按入学年级分布</h2>
@@ -116,7 +116,7 @@ export default function StatsPage() {
           </div>
 
           {/* 按行业分布 */}
-          <div className="card-surface p-6">
+          <div className="card-surface p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="text-primary-500" size={20} />
               <h2 className="text-base font-medium text-gray-800">按行业分布</h2>
@@ -139,7 +139,7 @@ export default function StatsPage() {
           </div>
 
           {/* 城市排行 */}
-          <div className="card-surface p-6">
+          <div className="card-surface p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-4">
               <Trophy className="text-amber-500" size={20} />
               <h2 className="text-base font-medium text-gray-800">城市分布 Top 10</h2>

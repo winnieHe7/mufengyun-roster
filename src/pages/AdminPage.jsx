@@ -188,7 +188,7 @@ export default function AdminPage() {
 
   // 学生表单组件（新增和编辑共用）
   const StudentFormFields = ({ onSubmit, onCancel }) => (
-    <form onSubmit={onSubmit} className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
       <div>
         <label className="block text-sm text-gray-500 mb-1">姓名 *</label>
         <input type="text" value={studentForm.name} onChange={e => setStudentForm({...studentForm, name: e.target.value})} required className={inputClass} />
@@ -259,11 +259,11 @@ export default function AdminPage() {
         <label className="block text-sm text-gray-500 mb-1">邮箱</label>
         <input type="email" value={studentForm.email} onChange={e => setStudentForm({...studentForm, email: e.target.value})} className={inputClass} />
       </div>
-      <div className="col-span-2 md:col-span-3">
+      <div className="sm:col-span-2 md:col-span-3">
         <label className="block text-sm text-gray-500 mb-1">个人简介</label>
         <textarea value={studentForm.bio} onChange={e => setStudentForm({...studentForm, bio: e.target.value})} rows={2} className={inputClass} />
       </div>
-      <div className="col-span-2 md:col-span-3 flex gap-2">
+      <div className="flex gap-2 sm:col-span-2 md:col-span-3">
         <button type="submit" className="flex items-center gap-1.5 px-5 py-2 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-lg transition-colors">
           <Save size={16} />
           保存
@@ -280,7 +280,7 @@ export default function AdminPage() {
     <div className="min-h-screen">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate('/')}
           className="flex items-center gap-1 text-sm text-gray-400 hover:text-primary-500 mb-4"
@@ -305,15 +305,16 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Tab 切换 */}
-        <div className="flex gap-1 mb-6 p-1.5 bg-gray-900 rounded-xl overflow-x-auto">
+        <div className="grid gap-5 lg:grid-cols-[190px_minmax(0,1fr)] lg:items-start">
+        {/* Tab 切换：桌面端深色侧栏，移动端保持横向可滚动 */}
+        <nav aria-label="管理后台导航" className="flex gap-1 overflow-x-auto rounded-xl bg-gray-900 p-1.5 lg:sticky lg:top-20 lg:flex-col lg:overflow-visible">
           {tabs.map(tab => {
             const Icon = tab.icon
             return (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors lg:w-full ${
                   activeTab === tab.key
                     ? 'bg-white text-gray-900 shadow-sm'
                     : 'text-gray-300 hover:text-white hover:bg-white/10'
@@ -324,7 +325,9 @@ export default function AdminPage() {
               </button>
             )
           })}
-        </div>
+        </nav>
+
+        <div className="min-w-0">
 
         {/* 花名册管理 */}
         {activeTab === 'students' && (
@@ -440,7 +443,7 @@ export default function AdminPage() {
             {showCreateForm && (
               <div className="bg-white rounded-xl shadow-sm border border-warm-200 p-6 mb-4">
                 <h3 className="text-base font-semibold text-primary-500 mb-4 section-title">创建新账号</h3>
-                <form onSubmit={handleCreate} className="grid grid-cols-2 gap-4">
+                <form onSubmit={handleCreate} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm text-gray-500 mb-1">姓名 *</label>
                     <input type="text" value={newAccount.name} onChange={e => setNewAccount({...newAccount, name: e.target.value})} required className={inputClass} placeholder="学生姓名" />
@@ -492,7 +495,7 @@ export default function AdminPage() {
                     <label className="block text-sm text-gray-500 mb-1">邮箱</label>
                     <input type="email" value={newAccount.email} onChange={e => setNewAccount({...newAccount, email: e.target.value})} className={inputClass} placeholder="如 xxx@example.com" />
                   </div>
-                  <div className="col-span-2">
+                  <div className="sm:col-span-2">
                     <button type="submit" className="w-full py-2.5 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-lg transition-colors">
                       创建账号并加入花名册
                     </button>
@@ -604,6 +607,8 @@ export default function AdminPage() {
             </div>
           </div>
         )}
+        </div>
+        </div>
       </main>
     </div>
   )
