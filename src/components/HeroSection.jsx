@@ -23,7 +23,7 @@ export default function HeroSection() {
           <p className="flex items-center gap-1 text-xs text-gray-500 mt-1"><MapPin size={12} />{mentorInfo.contact.office} · {teamInfo.slogan}</p>
         </div>
         <button onClick={() => navigate('/about')} className="self-start sm:self-auto flex items-center gap-1 px-3 py-2 text-sm text-primary-600 bg-white border border-primary-200 rounded-lg hover:border-primary-400 transition-colors">
-          完整档案 <ArrowRight size={14} />
+          详情简介 <ArrowRight size={14} />
         </button>
       </div>
     </section>

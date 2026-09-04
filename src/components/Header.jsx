@@ -1,46 +1,22 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, LogIn, LayoutDashboard, LogOut, User, Menu, X, BarChart3 } from 'lucide-react'
+import { LogIn, LayoutDashboard, LogOut, User, Menu, X, BarChart3 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { createInitialAvatar, getStableAvatarSource, handleAvatarError } from '../utils/avatar.js'
 
 /**
  * 顶部导航栏组件
- * Logo · 搜索框 · 关于我们 · 登录 · 个人中心
+ * Logo · 统计报表 · 登录 · 个人中心
  */
-export default function Header({ onSearch, searchQuery }) {
+export default function Header() {
   const { currentUser, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [localQuery, setLocalQuery] = useState(searchQuery || '')
-  const debounceRef = useRef(null)
-
-  useEffect(() => {
-    if (!onSearch) return undefined
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(() => {
-      onSearch(localQuery)
-    }, 300)
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-    }
-  }, [localQuery, onSearch])
-
-  useEffect(() => {
-    setLocalQuery(searchQuery || '')
-  }, [searchQuery])
-
   const handleLogout = () => {
     logout()
     setDropdownOpen(false)
     navigate('/')
-  }
-
-  const handleSearchKeyDown = (event) => {
-    if (event.key === 'Enter' && !onSearch && localQuery.trim()) {
-      navigate(`/?q=${encodeURIComponent(localQuery.trim())}`)
-    }
   }
 
   return (
@@ -56,21 +32,6 @@ export default function Header({ onSearch, searchQuery }) {
               同门星图
             </span>
           </Link>
-
-          {/* 中间搜索框 - 桌面端 */}
-          <div className="flex-1 max-w-md mx-4 hidden md:block">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-              <input
-                type="text"
-                value={localQuery}
-                onChange={(e) => setLocalQuery(e.target.value)}
-                onKeyDown={handleSearchKeyDown}
-                placeholder="搜索姓名 / 专业 / 城市 / 单位..."
-                className="w-full h-9 pl-9 pr-4 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white transition-all"
-              />
-            </div>
-          </div>
 
           {/* 右侧操作区 - 桌面端 */}
           <div className="hidden md:flex items-center gap-2">
@@ -148,21 +109,6 @@ export default function Header({ onSearch, searchQuery }) {
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-        </div>
-
-        {/* 移动端搜索框 */}
-        <div className="md:hidden pb-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-            <input
-              type="text"
-              value={localQuery}
-              onChange={(e) => setLocalQuery(e.target.value)}
-              onKeyDown={handleSearchKeyDown}
-              placeholder="搜索姓名 / 专业 / 城市..."
-              className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:bg-white"
-            />
-          </div>
         </div>
 
         {/* 移动端菜单 */}

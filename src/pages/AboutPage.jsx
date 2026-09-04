@@ -32,7 +32,7 @@ export default function AboutPage() {
           <div className="h-px bg-primary-500" />
 
           <div className="p-4 md:p-8">
-            <div className="mb-6 flex items-center justify-between gap-3"><div><p className="text-xs uppercase tracking-[0.18em] text-accent-500">MENTOR PROFILE</p><h1 className="mt-1 text-xl font-medium text-gray-900 section-title">导师完整档案</h1></div><span className="hidden rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs text-primary-600 sm:inline-flex">只读档案 · A4维护</span></div>
+            <div className="mb-6 flex items-center justify-between gap-3"><div><p className="text-xs uppercase tracking-[0.18em] text-accent-500">MENTOR PROFILE</p><h1 className="mt-1 text-xl font-medium text-gray-900 section-title">导师简介</h1></div><span className="hidden rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs text-primary-600 sm:inline-flex">只读档案 · A4维护</span></div>
 
             {/* 导师头部 */}
             <div className="grid gap-5 rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/80 to-white p-4 md:grid-cols-[150px_1fr] md:p-5 mb-8">

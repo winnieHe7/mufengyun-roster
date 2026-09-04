@@ -100,20 +100,9 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
         </div>
       </div>
 
-      {grouped.length > 1 && (
-        <nav className="flex items-center gap-2 px-5 py-3 overflow-x-auto border-b border-gray-100 bg-gray-50/70" aria-label="届别快速导航">
-          <span className="text-xs text-gray-400 flex-shrink-0">快速定位</span>
-          {grouped.map(group => (
-            <a key={`${group.year}-${group.degree}`} href={`#year-${group.year}-${group.degree}`} className="flex-shrink-0 px-3 py-1 text-xs text-primary-600 bg-white border border-primary-100 rounded-full hover:border-primary-400">
-              {group.year}级 · {group.students.length}
-            </a>
-          ))}
-        </nav>
-      )}
-
       {/* 分组展示 */}
       {grouped.map(group => (
-        <div key={`${group.year}-${group.degree}`} id={`year-${group.year}-${group.degree}`} className="py-5 scroll-mt-32">
+        <div key={`${group.year}-${group.degree}`} className="py-4">
           <div className="flex items-center gap-3 px-5 mb-3">
             <h3 className="text-sm font-semibold text-gray-800">
               {group.year}级{group.degree}

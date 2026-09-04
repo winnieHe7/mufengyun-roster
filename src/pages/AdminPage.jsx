@@ -35,7 +35,7 @@ export default function AdminPage() {
   const [config, setConfig] = useState({
     registrationOpen: true,
     exportEnabled: true,
-    announcement: '欢迎访问牟凤云团队系统',
+    announcement: '欢迎访问同门星图系统',
   })
 
   // 新建账号表单

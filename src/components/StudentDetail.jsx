@@ -31,8 +31,10 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
   const privacy = getPrivacy(student.id)
   const isLoggedIn = !!currentUser
   const isAdmin = currentUser?.role === 'admin'
-  const canSeePhone = isLoggedIn && (isAdmin || privacy.showPhone !== false || currentUser.id === student.id)
-  const canSeeEmail = isLoggedIn && (isAdmin || privacy.showEmail !== false || currentUser.id === student.id)
+  const isOwnProfile = currentUser?.studentId === student.id || currentUser?.id === student.id
+  const canSeePhone = isLoggedIn && (isAdmin || privacy.showPhone !== false || isOwnProfile)
+  const canSeeEmail = isLoggedIn && (isAdmin || privacy.showEmail !== false || isOwnProfile)
+  const contactHint = !isLoggedIn || !canSeePhone || !canSeeEmail ? '· 按隐私设置展示' : null
   const identityMeta = `${student.enrollYear ? `${student.enrollYear}级` : '校友'} · ${student.degree || '硕士研究生'} · ${student.status || '在读'}`
 
   const Info = ({ icon: Icon, label, value, muted = false }) => (
@@ -62,15 +64,15 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
         <div className="flex h-[50px] shrink-0 items-center border-b border-gray-100 bg-white px-4 md:hidden">
           <button type="button" onClick={onClose} aria-label="返回同门星图" className="inline-flex min-h-10 items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-200"><span aria-hidden="true" className="text-xl font-light leading-none text-gray-500">‹</span><span className="font-medium text-gray-800">同门星图</span><span className="text-gray-300">/</span><span className="text-gray-400">{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span></button>
         </div>
-        <button type="button" onClick={onClose} aria-label="关闭详细信息" className="absolute right-3 top-3 z-30 hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-300 md:flex md:right-4 md:top-4"><X size={17} /></button>
+        <button type="button" onClick={onClose} aria-label="关闭详细信息" className="absolute right-4 top-4 z-30 hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-300 md:flex"><X size={17} /></button>
 
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-          <div className="hidden border-b border-gray-100 bg-gray-50/80 px-7 py-3.5 pr-20 md:block">
+          <div className="hidden border-b border-primary-100 bg-primary-50/45 px-7 py-3.5 pr-20 md:block">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-400"><span>同门星图</span><span aria-hidden="true">/</span><span>{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span><span aria-hidden="true">/</span><span className="max-w-full break-words text-gray-600">{student.name}</span></div>
           </div>
 
           <div className="px-4 py-4 sm:px-7 sm:py-6">
-            <div className="mb-5 hidden items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-800 md:flex"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-amber-600" /><span>联系方式及部分个人信息受隐私设置保护，{isLoggedIn ? '当前账号可查看已授权内容。' : '登录后可查看已授权内容。'}</span></div>
+            {(!isLoggedIn || !canSeePhone || !canSeeEmail) && <div className="mb-5 hidden items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-800 md:flex"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-amber-600" /><span>联系方式及部分个人信息受隐私设置保护，{isLoggedIn ? '当前账号可查看已授权内容。' : '登录后可查看已授权内容。'}</span></div>}
 
             <div className="md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-7">
               <aside className="mb-5 min-w-0 border-b border-gray-100 pb-4 text-center md:mb-0 md:border-b-0 md:border-r md:pb-0 md:pr-7">
@@ -85,7 +87,7 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
               <div className="min-w-0">
                 <Section title="基本信息"><div className="grid gap-x-5 md:grid-cols-2 lg:grid-cols-3"><Info icon={User} label="性别" value={student.gender} /><Info icon={Users} label="民族" value={student.ethnicity} /><Info icon={MapPin} label="籍贯城市" value={student.hometown} /></div></Section>
                 <Section title="学业信息"><div className="grid gap-x-5 md:grid-cols-2 lg:grid-cols-3"><Info icon={Calendar} label="入学年级" value={student.enrollYear ? `${student.enrollYear}级` : ''} /><Info icon={BookOpen} label="学历层次" value={student.degree || '硕士研究生'} /><Info icon={BookOpen} label="专业" value={student.major} /><Info icon={Calendar} label="毕业年份" value={student.graduateYear ? `${student.graduateYear}年` : ''} /><Info icon={User} label="在校状态" value={student.status} /></div></Section>
-                <Section title="联系方式" hint="· 按隐私设置展示"><div className="grid gap-x-5 md:grid-cols-2 lg:grid-cols-3"><Info icon={Phone} label="手机号码" value={canSeePhone ? student.phone : '登录后可见'} muted={!canSeePhone} /><Info icon={Mail} label="电子邮箱" value={canSeeEmail ? student.email : '登录后可见'} muted={!canSeeEmail} /></div></Section>
+                <Section title="联系方式" hint={contactHint}><div className="grid gap-x-5 md:grid-cols-2 lg:grid-cols-3"><Info icon={Phone} label="手机号码" value={canSeePhone ? student.phone : '登录后可见'} muted={!canSeePhone} /><Info icon={Mail} label="电子邮箱" value={canSeeEmail ? student.email : '登录后可见'} muted={!canSeeEmail} /></div></Section>
                 <Section title="职业近况"><div className="grid gap-x-5 md:grid-cols-2 lg:grid-cols-3"><Info icon={Building2} label="工作单位" value={student.company} /><Info icon={Briefcase} label="所属行业" value={student.industry} /><Info icon={MapPin} label="工作城市" value={student.city} /><Info icon={Briefcase} label="岗位" value={student.position} /></div></Section>
               </div>
             </div>

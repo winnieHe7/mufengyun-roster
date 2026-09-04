@@ -1,19 +1,16 @@
 import { Filter, RotateCcw, ChevronDown } from 'lucide-react'
 
 /**
- * 多维度组合筛选栏组件
- * 支持入学年级、学历层次、工作城市、所属行业、在校状态的组合筛选
+ * 首页组合筛选栏组件
+ * 支持关键词、入学年级和在校状态筛选
  * @param {Object} props
  * @param {Object} props.filters - 当前筛选条件
  * @param {Function} props.onFilterChange - 筛选条件变更回调
  * @param {Function} props.onReset - 重置筛选回调
  * @param {Function} props.onConfirm - 确认筛选回调
  * @param {Array<string>} props.years - 可选入学年份列表
- * @param {Array<string>} props.degrees - 可选学历层次列表
- * @param {Array<string>} props.cities - 可选城市列表
- * @param {Array<string>} props.industries - 可选行业列表
  */
-export default function FilterBar({ filters, onFilterChange, onReset, onConfirm, years, degrees, cities, industries, searchQuery = '', onSearch }) {
+export default function FilterBar({ filters, onFilterChange, onReset, onConfirm, years, searchQuery = '', onSearch }) {
   const statusOptions = ['全部', '在读', '已毕业']
 
   const selectClass =
@@ -46,60 +43,6 @@ export default function FilterBar({ filters, onFilterChange, onReset, onConfirm,
               <option value="">全部</option>
               {years.map(y => (
                 <option key={y} value={y}>{y}级</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-          </div>
-        </div>
-
-        {/* 学历层次 */}
-        <div className={wrapperClass}>
-          <label className="block text-xs text-gray-400 mb-1">学历层次</label>
-          <div className="relative">
-            <select
-              value={filters.degree}
-              onChange={(e) => onFilterChange('degree', e.target.value)}
-              className={selectClass}
-            >
-              <option value="">全部</option>
-              {degrees.map(d => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-          </div>
-        </div>
-
-        {/* 工作城市 */}
-        <div className={wrapperClass}>
-          <label className="block text-xs text-gray-400 mb-1">工作城市</label>
-          <div className="relative">
-            <select
-              value={filters.city}
-              onChange={(e) => onFilterChange('city', e.target.value)}
-              className={selectClass}
-            >
-              <option value="">全部</option>
-              {cities.map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
-          </div>
-        </div>
-
-        {/* 所属行业 */}
-        <div className={wrapperClass}>
-          <label className="block text-xs text-gray-400 mb-1">所属行业</label>
-          <div className="relative">
-            <select
-              value={filters.industry}
-              onChange={(e) => onFilterChange('industry', e.target.value)}
-              className={selectClass}
-            >
-              <option value="">全部</option>
-              {industries.map(i => (
-                <option key={i} value={i}>{i}</option>
               ))}
             </select>
             <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
