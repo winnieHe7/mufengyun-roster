@@ -818,4 +818,12 @@ const mockStudents = [
 ]
 
 // 为所有记录添加默认学历层次（目前均为硕士研究生，后续可按需改为本科生/博士研究生）
-export default mockStudents.map(s => ({ ...s, degree: s.degree || '硕士研究生' }))
+export default mockStudents.map(s => ({
+  ...s,
+  degree: s.degree || '硕士研究生',
+  industry: Number(s.enrollYear) >= 2024 && Number(s.enrollYear) <= 2026
+    ? '上学'
+    : Number(s.enrollYear) === 2014
+      ? s.industry
+      : '',
+}))

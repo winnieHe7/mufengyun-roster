@@ -25,8 +25,8 @@ export default function Header() {
         <div className="flex items-center justify-between h-14">
           {/* 左侧 Logo */}
           <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white font-medium text-sm">
-              册
+            <div className="flex h-8 w-10 items-center justify-center overflow-hidden rounded-lg bg-white">
+              <img src="/brand-logo.jpg" alt="同门星图标志" className="h-full w-full scale-[1.55] object-contain" />
             </div>
             <span className="hidden sm:inline text-base font-medium text-gray-900">
               同门星图
