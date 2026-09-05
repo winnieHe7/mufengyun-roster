@@ -64,13 +64,15 @@ export default function StudentDetail({ student, onClose, onPrev, onNext, canGoP
         <div className="flex h-[50px] shrink-0 items-center border-b border-gray-100 bg-white px-4 md:hidden">
           <button type="button" onClick={onClose} aria-label="返回同门星图" className="inline-flex min-h-10 items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-primary-200"><span aria-hidden="true" className="text-xl font-light leading-none text-gray-500">‹</span><span className="font-medium text-gray-800">同门星图</span><span className="text-gray-300">/</span><span className="text-gray-400">{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span></button>
         </div>
-        <button type="button" onClick={onClose} aria-label="关闭详细信息" className="absolute right-4 top-4 z-30 hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-300 md:flex"><X size={17} /></button>
+
+        <div className="relative hidden h-[52px] shrink-0 items-center border-b border-primary-100 bg-primary-50/60 px-7 pr-20 md:flex">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-400">
+            <span>同门星图</span><span aria-hidden="true">/</span><span>{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span><span aria-hidden="true">/</span><span className="max-w-full break-words text-gray-600">{student.name}</span>
+          </div>
+          <button type="button" onClick={onClose} aria-label="关闭详细信息" className="absolute right-5 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-primary-200 hover:bg-primary-50 hover:text-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-300"><X size={17} /></button>
+        </div>
 
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
-          <div className="hidden border-b border-primary-100 bg-primary-50/45 px-7 py-3.5 pr-20 md:block">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-gray-400"><span>同门星图</span><span aria-hidden="true">/</span><span>{student.enrollYear ? `${student.enrollYear}级` : '校友'}</span><span aria-hidden="true">/</span><span className="max-w-full break-words text-gray-600">{student.name}</span></div>
-          </div>
-
           <div className="px-4 py-4 sm:px-7 sm:py-6">
             {(!isLoggedIn || !canSeePhone || !canSeeEmail) && <div className="mb-5 hidden items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-800 md:flex"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-amber-600" /><span>联系方式及部分个人信息受隐私设置保护，{isLoggedIn ? '当前账号可查看已授权内容。' : '登录后可查看已授权内容。'}</span></div>}
 

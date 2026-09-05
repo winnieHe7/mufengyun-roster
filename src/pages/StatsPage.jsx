@@ -79,7 +79,7 @@ export default function StatsPage() {
               <div className="relative w-36 h-36 rounded-full" style={{ background: `conic-gradient(#185FA5 0 ${activePercent}%, #FAC775 ${activePercent}% 100%)` }}>
                 <div className="absolute inset-5 bg-white rounded-full flex flex-col items-center justify-center"><span className="text-2xl font-medium text-gray-900">{total}</span><span className="text-xs text-gray-400">学生总数</span></div>
               </div>
-              <div className="space-y-3 text-sm"><p className="flex items-center gap-2"><i className="w-2.5 h-2.5 rounded-full bg-primary-500" />在校学生 <b className="font-medium">{active}</b></p><p className="flex items-center gap-2"><i className="w-2.5 h-2.5 rounded-full bg-amber-200" />往届毕业生 <b className="font-medium">{graduates}</b></p></div>
+              <div className="space-y-3 text-sm"><p className="flex items-center gap-2"><i className="w-2.5 h-2.5 rounded-full bg-primary-500" />在校学生 <b className="font-medium">{active}</b></p><p className="flex items-center gap-2"><i className="w-2.5 h-2.5 rounded-full bg-amber-200" />毕业生 <b className="font-medium">{graduates}</b></p></div>
             </div>
           </div>
           {/* 按届别分布 */}

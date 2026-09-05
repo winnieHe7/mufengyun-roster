@@ -68,8 +68,8 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
       {/* 工具栏 */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
         <h2 className="text-base font-medium text-gray-900">
-          学生花名册
-          <span className="text-xs font-normal text-gray-400 ml-2">共 {students.length} 人 · 按入学年级倒序</span>
+          星光名录
+          <span className="text-xs font-normal text-gray-400 ml-2">共 {students.length} 人</span>
         </h2>
         <div className="flex items-center gap-3">
           {canExport && (
@@ -107,7 +107,7 @@ export default function StudentList({ students, onStudentClick, viewMode, onView
             <h3 className="text-sm font-semibold text-gray-800">
               {group.year}级{group.degree}
             </h3>
-            <span className="text-xs text-gray-400">{group.students.length} 人 · 全量展示</span>
+            <span className="text-xs text-gray-400">{group.students.length} 人</span>
             <div className="flex-1 h-px bg-gray-100" />
           </div>
 

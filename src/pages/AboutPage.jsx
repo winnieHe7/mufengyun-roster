@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Mail, MapPin, Award, BookOpen, Calendar, Briefcase, Users, Target, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
+import { ArrowLeft, Mail, MapPin, Briefcase, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
 import Header from '../components/Header.jsx'
-import { mentorInfo, teamInfo } from '../data/siteInfo.js'
+import { mentorInfo } from '../data/siteInfo.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { handleAvatarError } from '../utils/avatar.js'
 
 /**
- * 关于我们页面
- * 导师完整简介 + 团队完整简介
+ * 导师简介页面
  */
 export default function AboutPage() {
   const navigate = useNavigate()
@@ -32,7 +31,7 @@ export default function AboutPage() {
           <div className="h-px bg-primary-500" />
 
           <div className="p-4 md:p-8">
-            <div className="mb-6 flex items-center justify-between gap-3"><div><p className="text-xs uppercase tracking-[0.18em] text-accent-500">MENTOR PROFILE</p><h1 className="mt-1 text-xl font-medium text-gray-900 section-title">导师简介</h1></div><span className="hidden rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs text-primary-600 sm:inline-flex">只读档案 · A4维护</span></div>
+            <div className="mb-6"><p className="text-xs uppercase tracking-[0.18em] text-accent-500">MENTOR PROFILE</p><h1 className="mt-1 text-xl font-medium text-gray-900 section-title">导师简介</h1></div>
 
             {/* 导师头部 */}
             <div className="grid gap-5 rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/80 to-white p-4 md:grid-cols-[150px_1fr] md:p-5 mb-8">
@@ -143,66 +142,6 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ===== 团队简介 ===== */}
-        <section className="card-surface overflow-hidden mb-5">
-          <div className="h-px bg-primary-500" />
-
-          <div className="p-6 md:p-8">
-            <h1 className="text-xl font-medium text-gray-900 section-title mb-6">团队简介</h1>
-
-            {/* 团队概要 */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <Users className="text-accent-400" size={24} />
-                <h2 className="text-xl font-bold text-gray-800">{teamInfo.name}</h2>
-                <span className="px-2 py-0.5 bg-accent-50 text-accent-600 text-xs rounded-full">
-                  成立于 {teamInfo.foundedYear} 年
-                </span>
-              </div>
-              <p className="text-sm text-gray-600 leading-relaxed">{teamInfo.description}</p>
-              <p className="text-sm text-accent-500 font-medium mt-3 italic">「{teamInfo.slogan}」</p>
-            </div>
-
-            {/* 统计数据 */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              {teamInfo.stats.map((s, i) => (
-                <div key={i} className="bg-warm-100 rounded-xl p-4 text-center">
-                  <p className="text-2xl font-bold text-primary-500">{s.value}</p>
-                  <p className="text-xs text-gray-400 mt-1">{s.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* 研究方向 */}
-            <div className="mb-8">
-              <h3 className="text-base font-semibold text-primary-500 section-title mb-4">研究方向</h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                {teamInfo.researchDirections.map((dir, i) => (
-                  <div key={i} className="p-4 bg-warm-100 rounded-xl border border-warm-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Target size={16} className="text-accent-400" />
-                      <h4 className="text-sm font-bold text-gray-700">{dir.title}</h4>
-                    </div>
-                    <p className="text-xs text-gray-500 leading-relaxed">{dir.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 团队亮点 */}
-            <div>
-              <h3 className="text-base font-semibold text-primary-500 section-title mb-4">团队亮点</h3>
-              <div className="grid md:grid-cols-2 gap-3">
-                {teamInfo.highlights.map((h, i) => (
-                  <div key={i} className="flex items-start gap-2 p-3 bg-accent-50 rounded-lg">
-                    <Award size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
-                    <p className="text-sm text-gray-600">{h}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   )

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { LogIn, LayoutDashboard, LogOut, User, Menu, X, BarChart3 } from 'lucide-react'
+import { LogIn, LayoutDashboard, LogOut, User, Menu, X, BarChart3, Images } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { createInitialAvatar, getStableAvatarSource, handleAvatarError } from '../utils/avatar.js'
 
@@ -35,6 +35,9 @@ export default function Header() {
 
           {/* 右侧操作区 - 桌面端 */}
           <div className="hidden md:flex items-center gap-2">
+            <Link to="/memories" className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg">
+              <Images size={16} />同门记忆
+            </Link>
             <Link to="/stats" className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 hover:text-primary-500 hover:bg-primary-50 rounded-lg">
               <BarChart3 size={16} />统计报表
             </Link>
@@ -114,6 +117,7 @@ export default function Header() {
         {/* 移动端菜单 */}
         {mobileMenuOpen && (
           <div id="mobile-navigation-menu" className="md:hidden pb-3 space-y-2">
+            <Link to="/memories" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"><Images size={16} />同门记忆</Link>
             <Link to="/stats" onClick={() => setMobileMenuOpen(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">统计报表</Link>
             {currentUser ? (
               <>

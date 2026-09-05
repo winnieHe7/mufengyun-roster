@@ -5,6 +5,7 @@ import AdminPage from './pages/AdminPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import LoginForm from './components/LoginForm.jsx'
 import ProfilePage from './components/ProfilePage.jsx'
+import MemoriesPage from './pages/MemoriesPage.jsx'
 
 /**
  * 主应用组件 · 路由配置
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/stats" element={<StatsPage />} />
+      <Route path="/memories" element={<MemoriesPage />} />
       <Route path="/admin" element={<AdminPage />} />
     </Routes>
   )

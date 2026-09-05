@@ -27,14 +27,14 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
       text: 'text-green-600',
     },
     {
-      label: '往届毕业生',
+      label: '毕业生',
       value: graduates,
       icon: GraduationCap,
       bg: 'bg-amber-50',
       text: 'text-amber-700',
     },
     {
-      label: '覆盖城市',
+      label: '工作城市',
       value: cities,
       unit: '座',
       icon: MapPin,
@@ -53,15 +53,15 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
             key={index}
             className="flex min-h-[46px] items-center justify-between gap-3 rounded-lg bg-gray-50/90 px-3 py-2.5 sm:px-4"
           >
-            <div>
-              <div className="text-xs text-gray-500">{card.label}</div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="whitespace-nowrap text-xl font-medium leading-none text-gray-900 sm:text-2xl">
-                {card.value}<span className="ml-1 text-xs font-normal text-gray-500">{card.unit || '人'}</span>
-              </div>
-              <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${card.bg}`}>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${card.bg}`}>
                 <Icon className={card.text} size={18} aria-hidden="true" />
+              </div>
+              <div className="min-w-0">
+                <div className="truncate text-xs text-gray-500">{card.label}</div>
+                <div className="mt-1 whitespace-nowrap text-xl font-medium leading-none text-gray-900 sm:text-2xl">
+                  {card.value}<span className="ml-1 text-xs font-normal text-gray-500">{card.unit || '人'}</span>
+                </div>
               </div>
             </div>
           </div>
