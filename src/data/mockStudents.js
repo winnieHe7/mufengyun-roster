@@ -821,6 +821,11 @@ const mockStudents = [
 export default mockStudents.map(s => ({
   ...s,
   degree: s.degree || '硕士研究生',
+  company: Number(s.enrollYear) >= 2024 && Number(s.enrollYear) <= 2026
+    ? '在读学生'
+    : Number(s.enrollYear) === 2014
+      ? s.company
+      : '',
   industry: Number(s.enrollYear) >= 2024 && Number(s.enrollYear) <= 2026
     ? '上学'
     : Number(s.enrollYear) === 2014
