@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Settings, Users, ToggleLeft, ToggleRight, Download, UserPlus, Trash2, KeyRound, Pencil, X, Save } from 'lucide-react'
+import { ArrowLeft, Settings, Users, ToggleLeft, ToggleRight, Download, UserPlus, Trash2, KeyRound, Pencil, X, Save, Images, Upload, CalendarDays, Tag } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { supabase, isSupabaseConfigured } from '../lib/supabase.js'
+import { loadMemoryPhotos, saveMemoryPhotos, compressMemoryImage } from '../utils/memoryPhotos.js'
 
 /**
  * 管理员后台页面
@@ -17,6 +18,14 @@ export default function AdminPage() {
   const [editingStudent, setEditingStudent] = useState(null)
   const [showAddStudent, setShowAddStudent] = useState(false)
   const [message, setMessage] = useState('')
+  const [memoryPhotos, setMemoryPhotos] = useState([])
+  const [memoryLoading, setMemoryLoading] = useState(false)
+  const [memorySaving, setMemorySaving] = useState(false)
+  const [memoryYear, setMemoryYear] = useState('')
+  const [memoryTag, setMemoryTag] = useState('')
+  const [memoryDate, setMemoryDate] = useState('')
+  const [memoryDescription, setMemoryDescription] = useState('')
+  const memoryInputRef = useRef(null)
 
   // 关键字筛选
   const [keyword, setKeyword] = useState('')
@@ -28,6 +37,23 @@ export default function AdminPage() {
         .some(v => String(v || '').toLowerCase().includes(q))
     )
   }, [students, keyword])
+
+  const memoryYears = useMemo(() => [...new Set([
+    ...(students || []).map(student => student.enrollYear),
+    ...(memoryPhotos || []).map(photo => photo.year),
+  ].filter(Boolean).map(String))].sort((a, b) => Number(b) - Number(a)), [students, memoryPhotos])
+
+  useEffect(() => {
+    if (!isAdmin) return undefined
+    let active = true
+    setMemoryLoading(true)
+    loadMemoryPhotos().then(photos => {
+      if (active) setMemoryPhotos(Array.isArray(photos) ? photos : [])
+    }).catch(() => {}).finally(() => {
+      if (active) setMemoryLoading(false)
+    })
+    return () => { active = false }
+  }, [isAdmin])
 
   if (!currentUser) return <Navigate to="/login" replace />
   if (!isAdmin) return <Navigate to="/" replace />
@@ -178,9 +204,81 @@ export default function AdminPage() {
     setTimeout(() => setMessage(''), 3000)
   }
 
+  const persistMemoryPhotos = async (nextPhotos, successText = '同门记忆已保存') => {
+    setMemoryPhotos(nextPhotos)
+    setMemorySaving(true)
+    const result = await saveMemoryPhotos(nextPhotos)
+    setMemorySaving(false)
+    setMessage(result.success ? successText : `${successText}（已保存本机，远程同步失败）`)
+    setTimeout(() => setMessage(''), 5000)
+  }
+
+  const handleMemoryUpload = async (event) => {
+    const files = Array.from(event.target.files || [])
+    event.target.value = ''
+    if (!memoryYear) {
+      setMessage('请先选择照片所属届次')
+      return
+    }
+    if (!files.length) return
+    const validFiles = files.filter(file => file.type.startsWith('image/') && file.size <= 20 * 1024 * 1024)
+    if (validFiles.length !== files.length) setMessage('仅支持图片文件，且单张不超过 20MB')
+    if (!validFiles.length) return
+    const added = []
+    for (const [index, file] of validFiles.entries()) {
+      try {
+        const src = await compressMemoryImage(file)
+        added.push({
+          id: `memory-${Date.now()}-${index}-${Math.random().toString(36).slice(2, 7)}`,
+          year: Number(memoryYear),
+          src,
+          label: memoryTag.trim() || file.name.replace(/\.[^.]+$/, ''),
+          date: memoryDate,
+          description: memoryDescription.trim(),
+          createdAt: new Date().toISOString(),
+        })
+      } catch {
+        setMessage(`「${file.name}」读取失败，已跳过`)
+      }
+    }
+    if (!added.length) return
+    await persistMemoryPhotos([...memoryPhotos, ...added], `已上传 ${added.length} 张照片`)
+    setMemoryTag('')
+    setMemoryDate('')
+    setMemoryDescription('')
+  }
+
+  const updateMemoryPhotoLocal = (id, field, value) => {
+    setMemoryPhotos(prev => prev.map(photo => photo.id === id ? { ...photo, [field]: value } : photo))
+  }
+
+  const handleSaveMemoryPhoto = async (photo) => {
+    await persistMemoryPhotos(memoryPhotos, `已保存「${photo.label || '未命名照片'}」`)
+  }
+
+  const handleDeleteMemoryPhoto = async (id) => {
+    if (!confirm('确定删除这张同门记忆照片吗？此操作不可撤销。')) return
+    await persistMemoryPhotos(memoryPhotos.filter(photo => photo.id !== id), '照片已删除')
+  }
+
+  const handleMoveMemoryPhoto = async (id, direction) => {
+    const current = memoryPhotos.findIndex(photo => photo.id === id)
+    if (current < 0) return
+    const year = String(memoryPhotos[current].year)
+    const sameYear = memoryPhotos.map((photo, index) => ({ photo, index })).filter(item => String(item.photo.year) === year)
+    const position = sameYear.findIndex(item => item.index === current)
+    const target = position + direction
+    if (target < 0 || target >= sameYear.length) return
+    const next = [...memoryPhotos]
+    const targetIndex = sameYear[target].index
+    ;[next[current], next[targetIndex]] = [next[targetIndex], next[current]]
+    await persistMemoryPhotos(next, '照片顺序已更新')
+  }
+
   const tabs = [
     { key: 'students', label: '花名册管理', icon: Users },
     { key: 'accounts', label: '账号分发', icon: UserPlus },
+    { key: 'memories', label: '同门记忆', icon: Images },
     { key: 'config', label: '系统配置', icon: Settings },
   ]
 
@@ -552,6 +650,112 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* 同门记忆照片管理 */}
+        {activeTab === 'memories' && (
+          <div className="space-y-5">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">同门记忆 · 照片管理</h2>
+                <p className="mt-1 text-xs text-gray-400">上传各届毕业合照，并为每张照片补充展示标签</p>
+              </div>
+              <span className="text-xs text-gray-400">共 {memoryPhotos.length} 张 · 覆盖 {new Set(memoryPhotos.map(photo => String(photo.year))).size} 个届次</span>
+            </div>
+
+            <section
+              className="rounded-xl border border-primary-200 bg-primary-50/60 p-4 sm:p-6"
+              onDragOver={event => event.preventDefault()}
+              onDrop={event => {
+                event.preventDefault()
+                handleMemoryUpload({ target: { files: event.dataTransfer.files, value: '' } })
+              }}
+            >
+              <div className="flex flex-col items-center justify-center gap-4 text-center">
+                <Upload size={24} className="text-primary-500" aria-hidden="true" />
+                <div>
+                  <p className="text-sm font-medium text-primary-700">拖拽照片到此处，或点击选择文件</p>
+                  <p className="mt-1 text-xs text-primary-500/75">支持批量上传 · JPG / PNG / WEBP · 单张不超过 20MB</p>
+                </div>
+                <input ref={memoryInputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={handleMemoryUpload} className="hidden" />
+                <button type="button" onClick={() => memoryInputRef.current?.click()} disabled={memorySaving} className="rounded-lg bg-primary-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60">
+                  {memorySaving ? '保存中…' : '选择照片'}
+                </button>
+              </div>
+              <div className="mt-5 grid gap-3 border-t border-primary-100 pt-4 sm:grid-cols-3">
+                <label className="text-left text-xs text-gray-500">
+                  <span className="mb-1 block">所属届次 *</span>
+                  <select value={memoryYear} onChange={event => setMemoryYear(event.target.value)} className={inputClass}>
+                    <option value="">请选择届次</option>
+                    {memoryYears.map(year => <option key={year} value={year}>{year}届</option>)}
+                  </select>
+                </label>
+                <label className="text-left text-xs text-gray-500">
+                  <span className="mb-1 flex items-center gap-1"><Tag size={13} />默认标签</span>
+                  <input value={memoryTag} onChange={event => setMemoryTag(event.target.value)} className={inputClass} placeholder="如 校门口合影" />
+                </label>
+                <label className="text-left text-xs text-gray-500">
+                  <span className="mb-1 flex items-center gap-1"><CalendarDays size={13} />拍摄日期（可选）</span>
+                  <input type="date" value={memoryDate} onChange={event => setMemoryDate(event.target.value)} className={inputClass} />
+                </label>
+              </div>
+              <label className="mt-3 block text-left text-xs text-gray-500">
+                <span className="mb-1 block">批量照片说明（可选）</span>
+                <input value={memoryDescription} onChange={event => setMemoryDescription(event.target.value)} className={inputClass} placeholder="如 答辩通过后合影" />
+              </label>
+            </section>
+
+            {memoryLoading ? (
+              <div className="rounded-xl border border-warm-200 bg-white py-12 text-center text-sm text-gray-400">正在读取照片…</div>
+            ) : memoryYears.filter(year => memoryPhotos.some(photo => String(photo.year) === year)).length === 0 ? (
+              <div className="rounded-xl border border-warm-200 bg-white py-12 text-center text-sm text-gray-400">
+                <Images size={40} className="mx-auto mb-3 opacity-30" aria-hidden="true" />
+                <p>暂无同门记忆照片</p>
+                <p className="mt-1 text-xs">选择届次后即可批量上传毕业合照</p>
+              </div>
+            ) : (
+              memoryYears.filter(year => memoryPhotos.some(photo => String(photo.year) === year)).map(year => (
+                <section key={year} className="rounded-xl border border-warm-200 bg-white p-4 shadow-sm sm:p-5">
+                  <div className="mb-4 flex items-baseline gap-2 border-b border-gray-100 pb-3">
+                    <h3 className="font-semibold text-primary-600">{year}届 · 毕业合照</h3>
+                    <span className="text-xs text-gray-400">{memoryPhotos.filter(photo => String(photo.year) === year).length} 张</span>
+                  </div>
+                  <div className="space-y-4">
+                    {memoryPhotos.filter(photo => String(photo.year) === year).map((photo, index, yearPhotos) => (
+                      <div key={photo.id} className="grid gap-4 border-b border-gray-100 pb-4 last:border-0 last:pb-0 md:grid-cols-[150px_minmax(0,1fr)_auto] md:items-start">
+                        <div className="aspect-[4/3] overflow-hidden rounded-lg border border-primary-100 bg-primary-50">
+                          {photo.src ? <img src={photo.src} alt={photo.label || `${year}届毕业合照`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-sm text-primary-400">毕业合照</div>}
+                        </div>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          <label className="text-xs text-gray-500 sm:col-span-2">
+                            <span className="mb-1 block">照片标签</span>
+                            <input value={photo.label || ''} onChange={event => updateMemoryPhotoLocal(photo.id, 'label', event.target.value)} className={inputClass} placeholder="如 校门口合影" />
+                          </label>
+                          <label className="text-xs text-gray-500">
+                            <span className="mb-1 block">拍摄日期</span>
+                            <input type="date" value={photo.date || ''} onChange={event => updateMemoryPhotoLocal(photo.id, 'date', event.target.value)} className={inputClass} />
+                          </label>
+                          <label className="text-xs text-gray-500">
+                            <span className="mb-1 block">说明</span>
+                            <input value={photo.description || ''} onChange={event => updateMemoryPhotoLocal(photo.id, 'description', event.target.value)} className={inputClass} placeholder="可选" />
+                          </label>
+                        </div>
+                        <div className="flex items-center gap-2 md:flex-col md:items-stretch">
+                          <span className="text-center text-xs text-gray-400 md:mb-1">排序 {index + 1}</span>
+                          <div className="flex gap-2 md:flex-col">
+                            <button type="button" onClick={() => handleMoveMemoryPhoto(photo.id, -1)} disabled={index === 0 || memorySaving} className="rounded-lg border border-warm-200 px-3 py-1.5 text-xs text-gray-600 hover:border-primary-300 hover:text-primary-600 disabled:cursor-not-allowed disabled:opacity-40">上移</button>
+                            <button type="button" onClick={() => handleSaveMemoryPhoto(photo)} disabled={memorySaving} className="rounded-lg border border-primary-200 px-3 py-1.5 text-xs text-primary-600 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-40">保存</button>
+                            <button type="button" onClick={() => handleMoveMemoryPhoto(photo.id, 1)} disabled={index === yearPhotos.length - 1 || memorySaving} className="rounded-lg border border-warm-200 px-3 py-1.5 text-xs text-gray-600 hover:border-primary-300 hover:text-primary-600 disabled:cursor-not-allowed disabled:opacity-40">下移</button>
+                            <button type="button" onClick={() => handleDeleteMemoryPhoto(photo.id)} disabled={memorySaving} className="rounded-lg border border-red-100 px-3 py-1.5 text-xs text-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40">删除</button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))
+            )}
           </div>
         )}
 

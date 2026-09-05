@@ -3,6 +3,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Images, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { loadMemoryPhotos } from '../utils/memoryPhotos.js'
 
 const PHOTO_SLOTS = 3
 const PALETTES = [
@@ -19,19 +20,44 @@ export default function MemoriesPage() {
   const navigate = useNavigate()
   const { students } = useAuth()
   const [selected, setSelected] = useState(null)
+  const [uploadedPhotos, setUploadedPhotos] = useState([])
+
+  useEffect(() => {
+    let active = true
+    loadMemoryPhotos().then(photos => {
+      if (active) setUploadedPhotos(Array.isArray(photos) ? photos : [])
+    }).catch(() => {})
+    return () => { active = false }
+  }, [])
 
   const cohorts = useMemo(() => (
-    [...new Set((students || []).map(student => student.enrollYear).filter(Boolean))]
+    [...new Set([
+      ...(students || []).map(student => student.enrollYear),
+      ...(uploadedPhotos || []).map(photo => photo.year),
+    ].filter(Boolean).map(String))]
       .sort((a, b) => Number(b) - Number(a))
-  ), [students])
+  ), [students, uploadedPhotos])
 
   const photos = useMemo(() => cohorts.flatMap(year => (
-    Array.from({ length: PHOTO_SLOTS }, (_, index) => ({
-      year,
-      index,
-      palette: PALETTES[index % PALETTES.length],
-    }))
-  )), [cohorts])
+    (() => {
+      const realPhotos = (uploadedPhotos || [])
+        .filter(photo => String(photo.year) === String(year))
+        .map((photo, index) => ({
+          ...photo,
+          year: String(year),
+          index,
+          palette: photo.palette || PALETTES[index % PALETTES.length],
+          isPlaceholder: false,
+        }))
+      if (realPhotos.length > 0) return realPhotos
+      return Array.from({ length: PHOTO_SLOTS }, (_, index) => ({
+        year,
+        index,
+        palette: PALETTES[index % PALETTES.length],
+        isPlaceholder: true,
+      }))
+    })()
+  )), [cohorts, uploadedPhotos])
 
   useEffect(() => {
     const previousTitle = document.title
@@ -45,7 +71,8 @@ export default function MemoriesPage() {
       if (event.key === 'Escape') setSelected(null)
       if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
       const offset = event.key === 'ArrowLeft' ? -1 : 1
-      const nextIndex = photos.findIndex(photo => photo.year === selected.year && photo.index === selected.index) + offset
+      const selectedKey = selected.id || `${selected.year}-${selected.index}`
+      const nextIndex = photos.findIndex(photo => (photo.id || `${photo.year}-${photo.index}`) === selectedKey) + offset
       if (nextIndex >= 0 && nextIndex < photos.length) setSelected(photos[nextIndex])
     }
     document.addEventListener('keydown', handleKeyDown)
@@ -56,7 +83,7 @@ export default function MemoriesPage() {
     }
   }, [photos, selected])
 
-  const selectedIndex = selected ? photos.findIndex(photo => photo.year === selected.year && photo.index === selected.index) : -1
+  const selectedIndex = selected ? photos.findIndex(photo => (photo.id || `${photo.year}-${photo.index}`) === (selected.id || `${selected.year}-${selected.index}`)) : -1
   const selectedPhoto = selectedIndex >= 0 ? photos[selectedIndex] : null
 
   return (
@@ -107,20 +134,26 @@ export default function MemoriesPage() {
                       {cohortPhotos.map(photo => (
                         <button
                           type="button"
-                          key={`${photo.year}-${photo.index}`}
+                          key={photo.id || `${photo.year}-${photo.index}`}
                           onClick={() => setSelected(photo)}
                           className="group relative aspect-[4/3] min-w-0 overflow-hidden rounded-xl border border-primary-100 bg-gradient-to-br text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2"
                           aria-label={`查看${photo.year}届毕业合照，第${photo.index + 1}张`}
                         >
-                          <div className={`absolute inset-0 bg-gradient-to-br ${photo.palette}`} />
-                          <div className="absolute inset-0 flex items-center justify-center text-primary-700/55 transition group-hover:text-primary-800/75">
-                            <div className="text-center">
-                              <Images className="mx-auto mb-2" size={28} strokeWidth={1.5} aria-hidden="true" />
-                              <span className="text-base tracking-[0.35em]">毕业合照</span>
-                            </div>
-                          </div>
+                          {photo.src ? (
+                            <img src={photo.src} alt={photo.label || `${photo.year}届毕业合照`} className="absolute inset-0 h-full w-full object-cover" />
+                          ) : (
+                            <>
+                              <div className={`absolute inset-0 bg-gradient-to-br ${photo.palette}`} />
+                              <div className="absolute inset-0 flex items-center justify-center text-primary-700/55 transition group-hover:text-primary-800/75">
+                                <div className="text-center">
+                                  <Images className="mx-auto mb-2" size={28} strokeWidth={1.5} aria-hidden="true" />
+                                  <span className="text-base tracking-[0.35em]">毕业合照</span>
+                                </div>
+                              </div>
+                            </>
+                          )}
                           <span className="absolute right-2.5 top-2.5 rounded-full bg-primary-700/60 px-2.5 py-1 text-[11px] font-medium text-white">{photo.index + 1} / {cohortPhotos.length}</span>
-                          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-900/80 to-transparent px-3 pb-2.5 pt-8 text-xs font-medium text-white">{photo.year}届毕业合照</span>
+                          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-900/80 to-transparent px-3 pb-2.5 pt-8 text-xs font-medium text-white">{photo.label || `${photo.year}届毕业合照`}</span>
                         </button>
                       ))}
                     </div>
@@ -137,11 +170,15 @@ export default function MemoriesPage() {
           <div className="relative w-full max-w-5xl" role="dialog" aria-modal="true" aria-label={`${selectedPhoto.year}届毕业合照`} onClick={event => event.stopPropagation()}>
             <button type="button" onClick={() => setSelected(null)} aria-label="关闭照片预览" className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-sm transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"><X size={18} /></button>
             <div className={`relative flex aspect-[16/9] items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br ${selectedPhoto.palette}`}>
-              <div className="text-center text-primary-900/65">
-                <Images className="mx-auto mb-3" size={52} strokeWidth={1.25} aria-hidden="true" />
-                <p className="text-2xl tracking-[0.45em]">毕业合照</p>
-                <p className="mt-2 text-sm tracking-normal">{selectedPhoto.year}届 · 第 {selectedPhoto.index + 1} 张</p>
-              </div>
+              {selectedPhoto.src ? (
+                <img src={selectedPhoto.src} alt={selectedPhoto.label || `${selectedPhoto.year}届毕业合照`} className="h-full w-full object-contain" />
+              ) : (
+                <div className="text-center text-primary-900/65">
+                  <Images className="mx-auto mb-3" size={52} strokeWidth={1.25} aria-hidden="true" />
+                  <p className="text-2xl tracking-[0.45em]">毕业合照</p>
+                  <p className="mt-2 text-sm tracking-normal">{selectedPhoto.year}届 · 第 {selectedPhoto.index + 1} 张</p>
+                </div>
+              )}
               {selectedIndex > 0 && <button type="button" onClick={() => setSelected(photos[selectedIndex - 1])} aria-label="上一张照片" className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/75 text-primary-800 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"><ChevronLeft size={20} /></button>}
               {selectedIndex < photos.length - 1 && <button type="button" onClick={() => setSelected(photos[selectedIndex + 1])} aria-label="下一张照片" className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/75 text-primary-800 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"><ChevronRight size={20} /></button>}
             </div>
