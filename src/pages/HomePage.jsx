@@ -146,9 +146,6 @@ export default function HomePage() {
       <footer className="border-t border-gray-200 bg-white mt-10">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center">
           <p className="text-sm font-medium text-gray-700">同门星图</p>
-          <p className="text-xs text-gray-400 mt-1">
-            账号由管理员统一分发 · 支持多维度筛选、可视化统计、数据导出
-          </p>
           <p className="text-xs text-gray-300 mt-2">© 2026 同门星图</p>
         </div>
       </footer>
