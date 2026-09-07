@@ -52,16 +52,16 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
         return (
           <div
             key={index}
-            className={`flex min-h-[46px] items-center gap-3 rounded-lg bg-gray-50/90 px-3 py-2.5 sm:px-4 ${horizontal ? 'justify-center' : 'justify-between'}`}
+            className={`flex min-h-[46px] items-center rounded-lg bg-gray-50/90 ${horizontal ? 'justify-center gap-1.5 px-1.5 py-2 sm:gap-3 sm:px-4 sm:py-2.5' : 'justify-between gap-3 px-3 py-2.5 sm:px-4'}`}
           >
-            <div className="flex min-w-0 items-center gap-2.5">
-              <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${card.bg}`}>
-                <Icon className={card.text} size={18} aria-hidden="true" />
+            <div className={`flex min-w-0 items-center ${horizontal ? 'gap-1 sm:gap-2.5' : 'gap-2.5'}`}>
+              <div className={`flex shrink-0 items-center justify-center rounded-lg ${horizontal ? 'h-7 w-7 sm:h-9 sm:w-9' : 'h-9 w-9'} ${card.bg}`}>
+                <Icon className={card.text} size={horizontal ? 16 : 18} aria-hidden="true" />
               </div>
-              <div className={horizontal ? 'flex min-w-0 items-center gap-1 whitespace-nowrap' : 'min-w-0'}>
-                <div className={`${horizontal ? 'whitespace-nowrap' : 'truncate'} text-xs text-gray-500`}>{card.label}{horizontal && '：'}</div>
-                <div className={`${horizontal ? '' : 'mt-1 '}whitespace-nowrap text-xl font-medium leading-none text-gray-900 sm:text-2xl`}>
-                  {card.value}<span className="ml-1 text-xs font-normal text-gray-500">{card.unit || '人'}</span>
+              <div className={horizontal ? 'flex min-w-0 items-center gap-0.5 whitespace-nowrap' : 'min-w-0'}>
+                <div className={`${horizontal ? 'whitespace-nowrap text-[10px] sm:text-xs' : 'truncate text-xs'} text-gray-500`}>{card.label}{horizontal && '：'}</div>
+                <div className={`${horizontal ? 'text-lg sm:text-2xl' : 'mt-1 text-xl sm:text-2xl'} whitespace-nowrap font-medium leading-none text-gray-900`}>
+                  {card.value}<span className={`${horizontal ? 'ml-0.5 text-[10px] sm:ml-1 sm:text-xs' : 'ml-1 text-xs'} font-normal text-gray-500`}>{card.unit || '人'}</span>
                 </div>
               </div>
             </div>
