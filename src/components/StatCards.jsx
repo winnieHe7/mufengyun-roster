@@ -59,7 +59,7 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
                 <Icon className={card.text} size={horizontal ? 16 : 18} aria-hidden="true" />
               </div>
               <div className={horizontal ? 'flex min-w-0 items-baseline gap-0.5 whitespace-nowrap' : 'min-w-0'}>
-                <div className={`${horizontal ? 'whitespace-nowrap text-xs sm:text-base' : 'truncate text-xs'} text-gray-500`}>{card.label}{horizontal && '：'}</div>
+                <div className={`${horizontal ? 'whitespace-nowrap text-xs leading-none sm:text-base' : 'truncate text-xs'} text-gray-500`}>{card.label}{horizontal && '：'}</div>
                 <div className={`${horizontal ? 'text-xl sm:text-3xl' : 'mt-1 text-xl sm:text-2xl'} whitespace-nowrap font-medium leading-none text-gray-900`}>
                   {card.value}<span className={`${horizontal ? 'ml-0.5 text-xs sm:ml-1 sm:text-base' : 'ml-1 text-xs'} font-normal text-gray-500`}>{card.unit || '人'}</span>
                 </div>
