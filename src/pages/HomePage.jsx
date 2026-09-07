@@ -118,6 +118,7 @@ export default function HomePage() {
           graduates={stats.graduates}
           active={stats.active}
           cities={stats.cities}
+          horizontal
           onViewFullStats={() => navigate('/stats')}
         />
 
