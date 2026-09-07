@@ -58,8 +58,8 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
               <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${card.bg}`}>
                 <Icon className={card.text} size={18} aria-hidden="true" />
               </div>
-              <div className={horizontal ? 'flex min-w-0 items-baseline gap-1.5' : 'min-w-0'}>
-                <div className="truncate text-xs text-gray-500">{card.label}{horizontal && '：'}</div>
+              <div className={horizontal ? 'flex min-w-0 items-center gap-1 whitespace-nowrap' : 'min-w-0'}>
+                <div className={`${horizontal ? 'whitespace-nowrap' : 'truncate'} text-xs text-gray-500`}>{card.label}{horizontal && '：'}</div>
                 <div className={`${horizontal ? '' : 'mt-1 '}whitespace-nowrap text-xl font-medium leading-none text-gray-900 sm:text-2xl`}>
                   {card.value}<span className="ml-1 text-xs font-normal text-gray-500">{card.unit || '人'}</span>
                 </div>
