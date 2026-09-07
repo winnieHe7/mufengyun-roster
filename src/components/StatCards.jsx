@@ -45,7 +45,7 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
 
   return (
     <section className="card-surface overflow-hidden">
-      <div className="grid grid-cols-2 gap-3 p-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4">
       {cards.map((card, index) => {
         const Icon = card.icon
         return (
