@@ -5,6 +5,22 @@ import Header from '../components/Header.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { supabase, isSupabaseConfigured } from '../lib/supabase.js'
 import { loadMemoryPhotos, saveMemoryPhotos, compressMemoryImage } from '../utils/memoryPhotos.js'
+import { mentorInfo } from '../data/siteInfo.js'
+import { loadMentorInfo, saveMentorInfo } from '../utils/mentorProfile.js'
+
+const mentorFormFromProfile = (profile) => ({
+  name: profile.name || '',
+  title: profile.title || '',
+  bio: profile.bio || '',
+  research: (profile.research || []).join('\n'),
+  titles: (profile.titles || []).join('\n'),
+  achievements: (profile.achievements || []).join('\n'),
+  honors: (profile.honors || []).join('\n'),
+  email: profile.contact?.email || '',
+  office: profile.contact?.office || '',
+})
+
+const linesToArray = (value) => String(value || '').split(/\r?\n/).map(item => item.trim()).filter(Boolean)
 
 /**
  * 管理员后台页面
@@ -26,6 +42,9 @@ export default function AdminPage() {
   const [memoryDate, setMemoryDate] = useState('')
   const [memoryDescription, setMemoryDescription] = useState('')
   const memoryInputRef = useRef(null)
+  const [mentorForm, setMentorForm] = useState(() => mentorFormFromProfile(mentorInfo))
+  const [mentorLoading, setMentorLoading] = useState(false)
+  const [mentorSaving, setMentorSaving] = useState(false)
 
   // 关键字筛选
   const [keyword, setKeyword] = useState('')
@@ -51,6 +70,18 @@ export default function AdminPage() {
       if (active) setMemoryPhotos(Array.isArray(photos) ? photos : [])
     }).catch(() => {}).finally(() => {
       if (active) setMemoryLoading(false)
+    })
+    return () => { active = false }
+  }, [isAdmin])
+
+  useEffect(() => {
+    if (!isAdmin) return undefined
+    let active = true
+    setMentorLoading(true)
+    loadMentorInfo().then(profile => {
+      if (active) setMentorForm(mentorFormFromProfile(profile))
+    }).catch(() => {}).finally(() => {
+      if (active) setMentorLoading(false)
     })
     return () => { active = false }
   }, [isAdmin])
@@ -275,9 +306,30 @@ export default function AdminPage() {
     await persistMemoryPhotos(next, '照片顺序已更新')
   }
 
+  const handleSaveMentor = async (event) => {
+    event.preventDefault()
+    const profile = {
+      ...mentorInfo,
+      name: mentorForm.name.trim(),
+      title: mentorForm.title.trim(),
+      bio: mentorForm.bio.trim(),
+      research: linesToArray(mentorForm.research),
+      titles: linesToArray(mentorForm.titles),
+      achievements: linesToArray(mentorForm.achievements),
+      honors: linesToArray(mentorForm.honors),
+      contact: { ...mentorInfo.contact, email: mentorForm.email.trim(), office: mentorForm.office.trim() },
+    }
+    setMentorSaving(true)
+    const result = await saveMentorInfo(profile)
+    setMentorSaving(false)
+    setMessage(result.success ? '导师资料已保存' : '导师资料已保存到本机，远程同步失败')
+    setTimeout(() => setMessage(''), 5000)
+  }
+
   const tabs = [
     { key: 'students', label: '花名册管理', icon: Users },
     { key: 'accounts', label: '账号分发', icon: UserPlus },
+    { key: 'mentor', label: '导师简介', icon: Pencil },
     { key: 'memories', label: '同门记忆', icon: Images },
     { key: 'config', label: '系统配置', icon: Settings },
   ]
@@ -650,6 +702,65 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* 导师简介管理 */}
+        {activeTab === 'mentor' && (
+          <div className="max-w-4xl">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">导师简介管理</h2>
+              <p className="mt-1 text-xs text-gray-400">修改后将同步到前台导师简介页面，分行填写列表内容</p>
+            </div>
+            {mentorLoading ? (
+              <div className="rounded-xl border border-warm-200 bg-white py-12 text-center text-sm text-gray-400">正在读取导师资料…</div>
+            ) : (
+              <form onSubmit={handleSaveMentor} className="space-y-5 rounded-xl border border-warm-200 bg-white p-4 shadow-sm sm:p-6">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">姓名</span>
+                    <input value={mentorForm.name} onChange={event => setMentorForm(prev => ({ ...prev, name: event.target.value }))} className={inputClass} required />
+                  </label>
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">职称/身份</span>
+                    <input value={mentorForm.title} onChange={event => setMentorForm(prev => ({ ...prev, title: event.target.value }))} className={inputClass} required />
+                  </label>
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">邮箱</span>
+                    <input type="email" value={mentorForm.email} onChange={event => setMentorForm(prev => ({ ...prev, email: event.target.value }))} className={inputClass} />
+                  </label>
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">办公地点</span>
+                    <input value={mentorForm.office} onChange={event => setMentorForm(prev => ({ ...prev, office: event.target.value }))} className={inputClass} />
+                  </label>
+                </div>
+                <label className="block text-sm text-gray-500">
+                  <span className="mb-1 block">个人简介</span>
+                  <textarea value={mentorForm.bio} onChange={event => setMentorForm(prev => ({ ...prev, bio: event.target.value }))} rows={6} className={inputClass} required />
+                </label>
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">研究方向（每行一项）</span>
+                    <textarea value={mentorForm.research} onChange={event => setMentorForm(prev => ({ ...prev, research: event.target.value }))} rows={5} className={inputClass} />
+                  </label>
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">学术兼职与社会职务（每行一项）</span>
+                    <textarea value={mentorForm.titles} onChange={event => setMentorForm(prev => ({ ...prev, titles: event.target.value }))} rows={5} className={inputClass} />
+                  </label>
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">科研成果（每行一项）</span>
+                    <textarea value={mentorForm.achievements} onChange={event => setMentorForm(prev => ({ ...prev, achievements: event.target.value }))} rows={5} className={inputClass} />
+                  </label>
+                  <label className="text-sm text-gray-500">
+                    <span className="mb-1 block">荣誉与奖项（每行一项）</span>
+                    <textarea value={mentorForm.honors} onChange={event => setMentorForm(prev => ({ ...prev, honors: event.target.value }))} rows={5} className={inputClass} />
+                  </label>
+                </div>
+                <button type="submit" disabled={mentorSaving} className="flex items-center gap-1.5 rounded-lg bg-primary-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60">
+                  <Save size={16} />{mentorSaving ? '保存中…' : '保存导师资料'}
+                </button>
+              </form>
+            )}
           </div>
         )}
 

@@ -1,14 +1,25 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Mail, MapPin, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import { mentorInfo } from '../data/siteInfo.js'
 import { handleAvatarError } from '../utils/avatar.js'
+import { loadMentorInfo } from '../utils/mentorProfile.js'
 
 /**
  * 导师简介页面
  */
 export default function AboutPage() {
   const navigate = useNavigate()
+  const [mentor, setMentor] = useState(mentorInfo)
+
+  useEffect(() => {
+    let active = true
+    loadMentorInfo().then(profile => {
+      if (active) setMentor(profile)
+    }).catch(() => {})
+    return () => { active = false }
+  }, [])
 
   return (
     <div className="min-h-screen">
@@ -33,24 +44,24 @@ export default function AboutPage() {
             {/* 导师头部 */}
             <div className="grid gap-5 rounded-2xl border border-primary-100 bg-gradient-to-br from-primary-50/80 to-white p-4 md:grid-cols-[150px_1fr] md:p-5 mb-8">
               <img
-                src={mentorInfo.avatar}
-                onError={(event) => handleAvatarError(event, mentorInfo.name, 256)}
-                alt={mentorInfo.name}
+                src={mentor.avatar}
+                onError={(event) => handleAvatarError(event, mentor.name, 256)}
+                alt={mentor.name}
                 className="h-32 w-32 rounded-2xl border-4 border-white object-cover shadow-md"
               />
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-800">{mentorInfo.name}</h2>
-                <p className="text-accent-400 font-medium mt-1">{mentorInfo.title}</p>
-                <p className="text-sm text-gray-600 leading-relaxed mt-3">{mentorInfo.bio}</p>
+                <h2 className="text-2xl font-bold text-gray-800">{mentor.name}</h2>
+                <p className="text-accent-400 font-medium mt-1">{mentor.title}</p>
+                <p className="text-sm text-gray-600 leading-relaxed mt-3">{mentor.bio}</p>
 
                 <div className="flex flex-wrap gap-4 mt-4">
                   <span className="flex items-center gap-1.5 text-sm text-gray-500">
                     <Mail size={14} className="text-accent-400" />
-                    {mentorInfo.contact.email}
+                    {mentor.contact.email}
                   </span>
                   <span className="flex items-center gap-1.5 text-sm text-gray-500">
                     <MapPin size={14} className="text-accent-400" />
-                    {mentorInfo.contact.office}
+                    {mentor.contact.office}
                   </span>
                 </div>
               </div>
@@ -59,7 +70,7 @@ export default function AboutPage() {
             <div className="mb-6">
               <h3 className="text-base font-semibold text-primary-500 section-title mb-3">研究方向</h3>
               <div className="flex flex-wrap gap-2">
-                {mentorInfo.research.map((r, i) => (
+                {mentor.research.map((r, i) => (
                   <span key={i} className="rounded-lg border border-primary-100 bg-primary-50 px-3 py-1.5 text-sm text-primary-700">
                     {r}
                   </span>
@@ -71,7 +82,7 @@ export default function AboutPage() {
             <div className="mb-6">
               <h3 className="text-base font-semibold text-primary-500 section-title mb-3">学术兼职与社会职务</h3>
               <div className="grid md:grid-cols-2 gap-2">
-                {mentorInfo.titles.map((t, i) => (
+                {mentor.titles.map((t, i) => (
                   <div key={i} className="flex items-start gap-2 p-2.5 bg-warm-100 rounded-lg">
                     <BadgeCheck size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-gray-600">{t}</p>
@@ -84,7 +95,7 @@ export default function AboutPage() {
             <div className="mb-6">
               <h3 className="text-base font-semibold text-primary-500 section-title mb-3">科研成果</h3>
               <div className="space-y-2">
-                {mentorInfo.achievements.map((a, i) => (
+                {mentor.achievements.map((a, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <CheckCircle2 size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-gray-600">{a}</p>
@@ -97,7 +108,7 @@ export default function AboutPage() {
             <div className="mb-6">
               <h3 className="text-base font-semibold text-primary-500 section-title mb-3">荣誉与奖项</h3>
               <div className="space-y-2">
-                {mentorInfo.honors.map((h, i) => (
+                {mentor.honors.map((h, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <Medal size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-gray-600">{h}</p>
