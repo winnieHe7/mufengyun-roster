@@ -9,8 +9,9 @@ import { TrendingUp, Users, GraduationCap, School, MapPin } from 'lucide-react'
  * @param {number} props.active - 在校学生数
  * @param {number} props.cities - 就业覆盖城市数
  * @param {Function} [props.onViewFullStats] - 查看完整统计回调
+ * @param {boolean} [props.horizontal] - 将标题和数值横向排列
  */
-export default function StatCards({ total, graduates, active, cities, onViewFullStats }) {
+export default function StatCards({ total, graduates, active, cities, onViewFullStats, horizontal = false }) {
   const cards = [
     {
       label: '学生总数',
@@ -51,15 +52,15 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
         return (
           <div
             key={index}
-            className="flex min-h-[46px] items-center justify-between gap-3 rounded-lg bg-gray-50/90 px-3 py-2.5 sm:px-4"
+            className={`flex min-h-[46px] items-center gap-3 rounded-lg bg-gray-50/90 px-3 py-2.5 sm:px-4 ${horizontal ? 'justify-center' : 'justify-between'}`}
           >
             <div className="flex min-w-0 items-center gap-2.5">
               <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${card.bg}`}>
                 <Icon className={card.text} size={18} aria-hidden="true" />
               </div>
-              <div className="min-w-0">
-                <div className="truncate text-xs text-gray-500">{card.label}</div>
-                <div className="mt-1 whitespace-nowrap text-xl font-medium leading-none text-gray-900 sm:text-2xl">
+              <div className={horizontal ? 'flex min-w-0 items-baseline gap-1.5' : 'min-w-0'}>
+                <div className="truncate text-xs text-gray-500">{card.label}{horizontal && '：'}</div>
+                <div className={`${horizontal ? '' : 'mt-1 '}whitespace-nowrap text-xl font-medium leading-none text-gray-900 sm:text-2xl`}>
                   {card.value}<span className="ml-1 text-xs font-normal text-gray-500">{card.unit || '人'}</span>
                 </div>
               </div>

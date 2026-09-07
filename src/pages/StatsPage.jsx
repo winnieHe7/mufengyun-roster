@@ -70,7 +70,7 @@ export default function StatsPage() {
           <div><h1 className="text-xl font-medium text-gray-900">统计报表</h1><p className="text-xs text-gray-400 mt-1">学生结构与发展分布概览</p></div>
         </div>
 
-        <div className="mb-5"><StatCards total={total} graduates={graduates} active={active} cities={cityCount} /></div>
+        <div className="mb-5"><StatCards total={total} graduates={graduates} active={active} cities={cityCount} horizontal /></div>
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <div className="card-surface flex h-[320px] min-h-0 flex-col p-4 sm:h-[340px] sm:p-5">
