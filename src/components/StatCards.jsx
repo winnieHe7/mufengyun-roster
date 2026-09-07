@@ -58,10 +58,10 @@ export default function StatCards({ total, graduates, active, cities, onViewFull
               <div className={`flex shrink-0 items-center justify-center rounded-lg ${horizontal ? 'h-7 w-7 sm:h-9 sm:w-9' : 'h-9 w-9'} ${card.bg}`}>
                 <Icon className={card.text} size={horizontal ? 16 : 18} aria-hidden="true" />
               </div>
-              <div className={horizontal ? 'flex min-w-0 -translate-y-0.5 items-center gap-0.5 whitespace-nowrap' : 'min-w-0'}>
-                <div className={`${horizontal ? 'whitespace-nowrap text-xs leading-none sm:text-base' : 'truncate text-xs'} text-gray-500`}>{card.label}{horizontal && '：'}</div>
-                <div className={`${horizontal ? 'inline-flex items-center text-xl sm:text-3xl' : 'mt-1 text-xl sm:text-2xl'} whitespace-nowrap font-medium leading-none text-gray-900`}>
-                  <span className="tabular-nums">{card.value}</span><span className={`${horizontal ? 'ml-0.5 text-xs leading-none sm:ml-1 sm:text-base' : 'ml-1 text-xs'} font-normal text-gray-500`}>{card.unit || '人'}</span>
+              <div className={horizontal ? 'flex min-w-0 -translate-y-0.5 items-center gap-0.5 whitespace-nowrap text-[11px] font-semibold leading-none sm:text-lg' : 'min-w-0'}>
+                <div className={`${horizontal ? 'whitespace-nowrap' : 'truncate text-xs'} text-gray-500`}>{card.label}{horizontal && '：'}</div>
+                <div className={`${horizontal ? 'inline-flex items-center font-semibold' : 'mt-1 text-xl font-medium sm:text-2xl'} whitespace-nowrap leading-none text-gray-900`}>
+                  <span className="tabular-nums">{card.value}</span><span className={`${horizontal ? 'ml-0.5 inline-flex self-center leading-none sm:ml-1' : 'ml-1 text-xs font-normal'} text-gray-500`}>{card.unit || '人'}</span>
                 </div>
               </div>
             </div>
