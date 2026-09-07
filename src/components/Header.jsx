@@ -13,6 +13,9 @@ export default function Header() {
   const navigate = useNavigate()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const isMentorAdmin = currentUser?.phone === 'mfy818'
+  const displayName = isMentorAdmin ? '牟凤云' : currentUser?.name
+  const displayAvatar = isMentorAdmin ? '/mentor-avatar.png' : currentUser?.avatar
   const handleLogout = () => {
     logout()
     setDropdownOpen(false)
@@ -49,12 +52,12 @@ export default function Header() {
                     className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <img
-                      src={getStableAvatarSource(currentUser.avatar) || createInitialAvatar(currentUser.name)}
-                      onError={(event) => handleAvatarError(event, currentUser.name)}
-                      alt={currentUser.name}
+                      src={getStableAvatarSource(displayAvatar) || createInitialAvatar(displayName)}
+                      onError={(event) => handleAvatarError(event, displayName)}
+                      alt={displayName}
                       className="w-8 h-8 rounded-full"
                     />
-                    <span className="text-sm font-medium text-gray-700">{currentUser.name}</span>
+                    <span className="text-sm font-medium text-gray-700">{displayName}</span>
                   </button>
 
                   {dropdownOpen && (
@@ -62,7 +65,7 @@ export default function Header() {
                       <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
                       <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-warm-200 py-1 z-20 animate-slide-down">
                         <Link
-                          to="/profile"
+                          to={isMentorAdmin ? '/admin?tab=mentor' : '/profile'}
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-warm-100"
                         >
@@ -122,7 +125,7 @@ export default function Header() {
             {currentUser ? (
               <>
                 <Link
-                  to="/profile"
+                  to={isMentorAdmin ? '/admin?tab=mentor' : '/profile'}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-warm-100 rounded-lg"
                 >

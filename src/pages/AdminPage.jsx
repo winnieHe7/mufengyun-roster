@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, Settings, Users, ToggleLeft, ToggleRight, Download, UserPlus, Trash2, KeyRound, Pencil, X, Save, Images, Upload, CalendarDays, Tag } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -29,7 +29,8 @@ const linesToArray = (value) => String(value || '').split(/\r?\n/).map(item => i
 export default function AdminPage() {
   const { currentUser, isAdmin, students, setStudents, accounts, createAccount, deleteAccount, resetPassword } = useAuth()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('students')
+  const [searchParams] = useSearchParams()
+  const [activeTab, setActiveTab] = useState(() => searchParams.get('tab') || 'students')
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingStudent, setEditingStudent] = useState(null)
   const [showAddStudent, setShowAddStudent] = useState(false)
@@ -741,19 +742,19 @@ export default function AdminPage() {
                 <div className="grid gap-4 lg:grid-cols-2">
                   <label className="text-sm text-gray-500">
                     <span className="mb-1 block">研究方向（每行一项）</span>
-                    <textarea value={mentorForm.research} onChange={event => setMentorForm(prev => ({ ...prev, research: event.target.value }))} rows={5} className={inputClass} />
+                    <textarea value={mentorForm.research} onChange={event => setMentorForm(prev => ({ ...prev, research: event.target.value }))} rows={8} className={inputClass} />
                   </label>
                   <label className="text-sm text-gray-500">
                     <span className="mb-1 block">学术兼职与社会职务（每行一项）</span>
-                    <textarea value={mentorForm.titles} onChange={event => setMentorForm(prev => ({ ...prev, titles: event.target.value }))} rows={5} className={inputClass} />
+                    <textarea value={mentorForm.titles} onChange={event => setMentorForm(prev => ({ ...prev, titles: event.target.value }))} rows={8} className={inputClass} />
                   </label>
                   <label className="text-sm text-gray-500">
                     <span className="mb-1 block">科研成果（每行一项）</span>
-                    <textarea value={mentorForm.achievements} onChange={event => setMentorForm(prev => ({ ...prev, achievements: event.target.value }))} rows={5} className={inputClass} />
+                    <textarea value={mentorForm.achievements} onChange={event => setMentorForm(prev => ({ ...prev, achievements: event.target.value }))} rows={8} className={inputClass} />
                   </label>
                   <label className="text-sm text-gray-500">
                     <span className="mb-1 block">荣誉与奖项（每行一项）</span>
-                    <textarea value={mentorForm.honors} onChange={event => setMentorForm(prev => ({ ...prev, honors: event.target.value }))} rows={5} className={inputClass} />
+                    <textarea value={mentorForm.honors} onChange={event => setMentorForm(prev => ({ ...prev, honors: event.target.value }))} rows={8} className={inputClass} />
                   </label>
                 </div>
                 <button type="submit" disabled={mentorSaving} className="flex items-center gap-1.5 rounded-lg bg-primary-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-60">

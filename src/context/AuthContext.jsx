@@ -123,9 +123,11 @@ export function AuthProvider({ children }) {
         .from('students').select('id').eq('phone', data.phone).maybeSingle()
       if (stu) studentId = stu.id
 
+      const isMentorAdmin = data.phone === 'mfy818'
       const userInfo = {
-        id: data.id, studentId, name: data.name, phone: data.phone,
-        role: data.role, degree: data.degree, avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=1e3a5f&color=fff`,
+        id: data.id, studentId, name: isMentorAdmin ? '牟凤云' : data.name, phone: data.phone,
+        role: data.role, degree: data.degree,
+        avatar: isMentorAdmin ? '/mentor-avatar.png' : `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=1e3a5f&color=fff`,
       }
       // 同时加载完整学生信息
       if (studentId) {

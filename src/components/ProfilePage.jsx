@@ -175,6 +175,7 @@ export default function ProfilePage() {
   }
 
   if (!currentUser) return <Navigate to="/login" replace />
+  if (currentUser.phone === 'mfy818') return <Navigate to="/admin?tab=mentor" replace />
 
   const completeness = calcProfileCompleteness(currentUser)
   const privacy = getPrivacy(currentUser.id)
