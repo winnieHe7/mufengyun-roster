@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Mail, MapPin, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
 import Header from '../components/Header.jsx'
-import { mentorInfo } from '../data/siteInfo.js'
 import { handleAvatarError } from '../utils/avatar.js'
 import { loadMentorInfo } from '../utils/mentorProfile.js'
 
@@ -11,7 +10,7 @@ import { loadMentorInfo } from '../utils/mentorProfile.js'
  */
 export default function AboutPage() {
   const navigate = useNavigate()
-  const [mentor, setMentor] = useState(mentorInfo)
+  const [mentor, setMentor] = useState(null)
 
   useEffect(() => {
     let active = true
@@ -38,7 +37,11 @@ export default function AboutPage() {
         <section className="card-surface overflow-hidden mb-5">
           <div className="h-px bg-primary-500" />
 
-          <div className="p-4 md:p-8">
+          {!mentor ? (
+            <div className="flex min-h-72 items-center justify-center p-8 text-sm text-gray-400" role="status">
+              正在加载导师资料…
+            </div>
+          ) : <div className="p-4 md:p-8">
             <div className="mb-6"><p className="text-xs uppercase tracking-[0.18em] text-accent-500">MENTOR PROFILE</p><h1 className="mt-1 text-xl font-medium text-gray-900 section-title">导师简介</h1></div>
 
             {/* 导师头部 */}
@@ -117,7 +120,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-          </div>
+          </div>}
         </section>
 
       </main>

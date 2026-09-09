@@ -5,13 +5,14 @@ export const MENTOR_CONFIG_KEY = 'mentor_info'
 const LOCAL_STORAGE_KEY = 'roster_mentor_info'
 
 function mergeMentorInfo(value) {
+  const keepContent = (items, fallback) => Array.isArray(items) && items.length > 0 ? items : fallback
   return {
     ...defaultMentorInfo,
     ...(value || {}),
-    research: Array.isArray(value?.research) ? value.research : defaultMentorInfo.research,
-    titles: Array.isArray(value?.titles) ? value.titles : defaultMentorInfo.titles,
-    achievements: Array.isArray(value?.achievements) ? value.achievements : defaultMentorInfo.achievements,
-    honors: Array.isArray(value?.honors) ? value.honors : defaultMentorInfo.honors,
+    research: keepContent(value?.research, defaultMentorInfo.research),
+    titles: keepContent(value?.titles, defaultMentorInfo.titles),
+    achievements: keepContent(value?.achievements, defaultMentorInfo.achievements),
+    honors: keepContent(value?.honors, defaultMentorInfo.honors),
     experience: Array.isArray(value?.experience) ? value.experience : defaultMentorInfo.experience,
     awards: Array.isArray(value?.awards) ? value.awards : defaultMentorInfo.awards,
     contact: { ...defaultMentorInfo.contact, ...(value?.contact || {}) },

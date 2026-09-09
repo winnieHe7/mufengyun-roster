@@ -85,7 +85,7 @@ function InfoRow({ icon: Icon, label, value, field, type = 'text', editing, form
  * 展示个人信息、编辑功能、隐私设置、信息完善度
  */
 export default function ProfilePage() {
-  const { currentUser, updateProfile, updateLoginAccount, updateLoginPassword, updatePrivacy, getPrivacy, calcProfileCompleteness, isAdmin } = useAuth()
+  const { currentUser, students, updateProfile, updateLoginAccount, updateLoginPassword, updatePrivacy, getPrivacy, calcProfileCompleteness, isAdmin } = useAuth()
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
@@ -178,7 +178,8 @@ export default function ProfilePage() {
   if (currentUser.phone === 'mfy818') return <Navigate to="/admin?tab=mentor" replace />
 
   const completeness = calcProfileCompleteness(currentUser)
-  const privacy = getPrivacy(currentUser.id)
+  const linkedStudentId = currentUser.studentId || students.find(student => student.phone && student.phone === currentUser.phone)?.id
+  const privacy = getPrivacy(linkedStudentId)
 
   const handleSave = async () => {
     setSaving(true)
@@ -189,8 +190,10 @@ export default function ProfilePage() {
     setTimeout(() => setMessage(''), 3000)
   }
 
-  const handlePrivacyChange = (key, value) => {
-    updatePrivacy(currentUser.id, { ...privacy, [key]: value })
+  const handlePrivacyChange = async (key, value) => {
+    const result = await updatePrivacy(linkedStudentId, { ...privacy, [key]: value })
+    setMessage(result.message)
+    setTimeout(() => setMessage(''), 3000)
   }
 
   const handleUpdateAccount = async () => {

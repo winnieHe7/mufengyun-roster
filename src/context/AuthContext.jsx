@@ -15,6 +15,17 @@ const STORAGE_KEYS = {
   USERS: 'roster_distributed_accounts',
   STUDENTS: 'roster_students_data',
   PRIVACY: 'roster_privacy_settings',
+  PRIVACY_VERSION: 'roster_privacy_settings_version',
+}
+
+const DEFAULT_PRIVACY = { showPhone: true, showEmail: true, showCompany: true }
+
+function normalizePrivacy(settings = {}) {
+  return {
+    showPhone: settings.showPhone !== false,
+    showEmail: settings.showEmail !== false,
+    showCompany: settings.showCompany !== false,
+  }
 }
 
 function readFromStorage(key, defaultValue) {
@@ -55,7 +66,8 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     // currentUser 已在 useState 初始化时同步恢复，这里只恢复隐私设置
     const savedPrivacy = readFromStorage(STORAGE_KEYS.PRIVACY, {})
-    setPrivacySettings(savedPrivacy)
+    const privacyVersion = readFromStorage(STORAGE_KEYS.PRIVACY_VERSION, 1)
+    if (!isSupabaseConfigured || privacyVersion === 2) setPrivacySettings(savedPrivacy)
 
     if (isSupabaseConfigured) {
       loadFromSupabase()
@@ -94,6 +106,59 @@ export function AuthProvider({ children }) {
           graduateYear: a.graduate_year, hometown: a.hometown, major: a.major,
           city: a.city, email: a.email, createdAt: a.created_at,
         })))
+      }
+
+      // 加载隐私设置，并把旧版本按 accounts.id 保存的本机设置迁移到 students.id。
+      const { data: privacyData, error: pErr } = await supabase
+        .from('privacy_settings').select('student_id, show_phone, show_email, show_company')
+      if (pErr) throw pErr
+
+      const remotePrivacy = Object.fromEntries((privacyData || []).map(item => [
+        item.student_id,
+        {
+          showPhone: item.show_phone !== false,
+          showEmail: item.show_email !== false,
+          showCompany: item.show_company !== false,
+        },
+      ]))
+      const savedPrivacy = readFromStorage(STORAGE_KEYS.PRIVACY, {})
+      const privacyVersion = readFromStorage(STORAGE_KEYS.PRIVACY_VERSION, 1)
+      const migratedPrivacy = {}
+      const migratedRows = []
+
+      if (privacyVersion === 2) {
+        Object.entries(savedPrivacy).forEach(([studentId, settings]) => {
+          migratedPrivacy[studentId] = normalizePrivacy(settings)
+        })
+      } else {
+        Object.entries(savedPrivacy).forEach(([accountId, settings]) => {
+          const account = (accountsData || []).find(item => String(item.id) === String(accountId))
+          const linkedStudent = account
+            ? (studentsData || []).find(item => item.phone && item.phone === account.phone)
+            : null
+          if (!linkedStudent) return
+          const normalized = normalizePrivacy(settings)
+          migratedPrivacy[linkedStudent.id] = normalized
+          if (!remotePrivacy[linkedStudent.id]) {
+            migratedRows.push({
+              student_id: linkedStudent.id,
+              show_phone: normalized.showPhone,
+              show_email: normalized.showEmail,
+              show_company: normalized.showCompany,
+            })
+          }
+        })
+      }
+
+      const mergedPrivacy = { ...migratedPrivacy, ...remotePrivacy }
+      setPrivacySettings(mergedPrivacy)
+      writeToStorage(STORAGE_KEYS.PRIVACY, mergedPrivacy)
+      writeToStorage(STORAGE_KEYS.PRIVACY_VERSION, 2)
+
+      if (migratedRows.length > 0) {
+        const { error: migrateErr } = await supabase
+          .from('privacy_settings').upsert(migratedRows, { onConflict: 'student_id' })
+        if (migrateErr) console.warn('旧隐私设置远程迁移失败:', migrateErr)
       }
     } catch (e) {
       console.error('Supabase 加载失败，降级到本地数据:', e)
@@ -378,14 +443,40 @@ export function AuthProvider({ children }) {
   }, [currentUser, students])
 
   // ===== 隐私设置 =====
-  const updatePrivacy = useCallback((userId, settings) => {
-    const updated = { ...privacySettings, [userId]: settings }
+  const updatePrivacy = useCallback(async (studentId, settings) => {
+    if (!studentId) return { success: false, message: '未找到对应的学生档案' }
+
+    const normalized = normalizePrivacy(settings)
+    const previous = privacySettings[studentId]
+    const updated = { ...privacySettings, [studentId]: normalized }
     setPrivacySettings(updated)
     writeToStorage(STORAGE_KEYS.PRIVACY, updated)
+    writeToStorage(STORAGE_KEYS.PRIVACY_VERSION, 2)
+
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.from('privacy_settings').upsert({
+        student_id: studentId,
+        show_phone: normalized.showPhone,
+        show_email: normalized.showEmail,
+        show_company: normalized.showCompany,
+      }, { onConflict: 'student_id' })
+
+      if (error) {
+        const rollback = { ...privacySettings }
+        if (previous) rollback[studentId] = previous
+        else delete rollback[studentId]
+        setPrivacySettings(rollback)
+        writeToStorage(STORAGE_KEYS.PRIVACY, rollback)
+        writeToStorage(STORAGE_KEYS.PRIVACY_VERSION, 2)
+        return { success: false, message: '隐私设置保存失败，请稍后重试' }
+      }
+    }
+
+    return { success: true, message: '隐私设置已生效' }
   }, [privacySettings])
 
-  const getPrivacy = useCallback((userId) => {
-    return privacySettings[userId] || { showPhone: true, showEmail: true, showCompany: true }
+  const getPrivacy = useCallback((studentId) => {
+    return privacySettings[studentId] || DEFAULT_PRIVACY
   }, [privacySettings])
 
   const isAdmin = currentUser?.role === 'admin'
