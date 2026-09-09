@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { Navigate } from 'react-router-dom'
 import { User, Phone, Mail, MapPin, Building2, Briefcase, Calendar, BookOpen, Save, Lock, Shield, FileText, Users, KeyRound, LogIn, Camera, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -106,6 +106,10 @@ export default function ProfilePage() {
   const [avatarMsg, setAvatarMsg] = useState('')
   const [avatarLoading, setAvatarLoading] = useState(false)
 
+  useEffect(() => {
+    if (!editing && currentUser) setForm({ ...currentUser })
+  }, [currentUser, editing])
+
   const handleChange = useCallback((field, value) => {
     setForm(prev => ({ ...prev, [field]: value }))
   }, [])
@@ -186,7 +190,7 @@ export default function ProfilePage() {
     const result = await updateProfile(form)
     setMessage(result.message)
     setSaving(false)
-    setEditing(false)
+    if (result.success) setEditing(false)
     setTimeout(() => setMessage(''), 3000)
   }
 

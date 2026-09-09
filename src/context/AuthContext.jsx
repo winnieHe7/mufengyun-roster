@@ -45,6 +45,36 @@ function writeToStorage(key, value) {
   }
 }
 
+function buildCurrentUser(account, student = null) {
+  const isMentorAdmin = account.phone === 'mfy818'
+  return {
+    id: account.id,
+    studentId: student?.id ?? null,
+    name: isMentorAdmin ? '牟凤云' : (student?.name || account.name),
+    phone: account.phone,
+    role: account.role,
+    degree: student?.degree ?? account.degree,
+    avatar: isMentorAdmin
+      ? '/mentor-avatar.png'
+      : (student?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(student?.name || account.name)}&background=1e3a5f&color=fff`),
+    ...(student ? {
+      gender: student.gender,
+      ethnicity: student.ethnicity,
+      hometown: student.hometown,
+      enrollYear: student.enroll_year,
+      graduateYear: student.graduate_year,
+      status: student.status,
+      major: student.major,
+      company: student.company,
+      industry: student.industry,
+      city: student.city,
+      position: student.position,
+      email: student.email,
+      bio: student.bio,
+    } : {}),
+  }
+}
+
 export function AuthProvider({ children }) {
   // 同步从 localStorage 恢复登录态，避免刷新时 useEffect 异步恢复导致被路由守卫先跳转到 /login
   const [currentUser, setCurrentUser] = useState(() => {
@@ -106,6 +136,23 @@ export function AuthProvider({ children }) {
           graduateYear: a.graduate_year, hometown: a.hometown, major: a.major,
           city: a.city, email: a.email, createdAt: a.created_at,
         })))
+      }
+
+      // 手机端常会从 localStorage 先恢复旧登录态。数据库数据加载后，
+      // 按稳定的账号 ID / 学生 ID 重新对齐，避免账号或资料修改后仍显示本机旧缓存。
+      if (accountsData) {
+        setCurrentUser(previous => {
+          if (!previous) return previous
+          const account = accountsData.find(item => String(item.id) === String(previous.id))
+            || accountsData.find(item => item.phone === previous.phone)
+          if (!account) return previous
+          const student = (studentsData || []).find(item => previous.studentId && String(item.id) === String(previous.studentId))
+            || (studentsData || []).find(item => item.phone && item.phone === account.phone)
+            || null
+          const refreshedUser = buildCurrentUser(account, student)
+          writeToStorage(STORAGE_KEYS.USER, refreshedUser)
+          return refreshedUser
+        })
       }
 
       // 加载隐私设置，并把旧版本按 accounts.id 保存的本机设置迁移到 students.id。
@@ -188,31 +235,13 @@ export function AuthProvider({ children }) {
         .from('students').select('id').eq('phone', data.phone).maybeSingle()
       if (stu) studentId = stu.id
 
-      const isMentorAdmin = data.phone === 'mfy818'
-      const userInfo = {
-        id: data.id, studentId, name: isMentorAdmin ? '牟凤云' : data.name, phone: data.phone,
-        role: data.role, degree: data.degree,
-        avatar: isMentorAdmin ? '/mentor-avatar.png' : `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=1e3a5f&color=fff`,
-      }
+      let fullStudent = null
       // 同时加载完整学生信息
       if (studentId) {
         const { data: fullStu } = await supabase.from('students').select('*').eq('id', studentId).maybeSingle()
-        if (fullStu) {
-          userInfo.gender = fullStu.gender
-          userInfo.ethnicity = fullStu.ethnicity
-          userInfo.hometown = fullStu.hometown
-          userInfo.enrollYear = fullStu.enroll_year
-          userInfo.graduateYear = fullStu.graduate_year
-          userInfo.status = fullStu.status
-          userInfo.major = fullStu.major
-          userInfo.company = fullStu.company
-          userInfo.industry = fullStu.industry
-          userInfo.city = fullStu.city
-          userInfo.position = fullStu.position
-          userInfo.email = fullStu.email
-          userInfo.bio = fullStu.bio
-        }
+        if (fullStu) fullStudent = fullStu
       }
+      const userInfo = buildCurrentUser(data, fullStudent)
       setCurrentUser(userInfo)
       writeToStorage(STORAGE_KEYS.USER, userInfo)
       return { success: true, message: '登录成功' }
@@ -356,18 +385,45 @@ export function AuthProvider({ children }) {
         .from('accounts').select('id').eq('phone', newPhone.trim()).neq('id', currentUser.id).maybeSingle()
       if (existing) return { success: false, message: '该账号已被占用' }
 
-      const { error } = await supabase.from('accounts').update({ phone: newPhone.trim() }).eq('id', currentUser.id)
+      const { data: changedAccount, error } = await supabase
+        .from('accounts').update({ phone: newPhone.trim() }).eq('id', currentUser.id).select('id').maybeSingle()
       if (error) return { success: false, message: '修改失败: ' + error.message }
+      if (!changedAccount) return { success: false, message: '修改失败：账号记录未更新' }
 
       // 同步更新 students 表的 phone
-      await supabase.from('students').update({ phone: newPhone.trim() }).eq('phone', currentUser.phone)
+      const linkedStudentId = currentUser.studentId
+        || students.find(student => student.phone && student.phone === currentUser.phone)?.id
+      if (linkedStudentId) {
+        const { data: changedStudent, error: studentError } = await supabase
+          .from('students').update({ phone: newPhone.trim() }).eq('id', linkedStudentId).select('id').maybeSingle()
+        if (studentError || !changedStudent) {
+          await supabase.from('accounts').update({ phone: currentUser.phone }).eq('id', currentUser.id)
+          return { success: false, message: '修改失败：学生档案未能同步' }
+        }
+      }
     }
 
     const updatedUser = { ...currentUser, phone: newPhone.trim() }
     setCurrentUser(updatedUser)
     writeToStorage(STORAGE_KEYS.USER, updatedUser)
+    const updatedAccounts = accounts.map(account =>
+      String(account.id) === String(currentUser.id) ? { ...account, phone: newPhone.trim() } : account
+    )
+    setAccounts(updatedAccounts)
+    const linkedStudentId = currentUser.studentId
+      || students.find(student => student.phone && student.phone === currentUser.phone)?.id
+    const updatedStudents = students.map(student =>
+      linkedStudentId && String(student.id) === String(linkedStudentId)
+        ? { ...student, phone: newPhone.trim() }
+        : student
+    )
+    setStudents(updatedStudents)
+    if (!isSupabaseConfigured) {
+      writeToStorage(STORAGE_KEYS.USERS, updatedAccounts)
+      writeToStorage(STORAGE_KEYS.STUDENTS, updatedStudents)
+    }
     return { success: true, message: '登录账号修改成功，下次请用新账号登录' }
-  }, [currentUser])
+  }, [currentUser, accounts, students])
 
   // ===== 修改登录密码 =====
   const updateLoginPassword = useCallback(async (oldPwd, newPwd) => {
@@ -397,10 +453,6 @@ export function AuthProvider({ children }) {
   const updateProfile = useCallback(async (updates) => {
     if (!currentUser) return { success: false, message: '请先登录' }
 
-    const updatedUser = { ...currentUser, ...updates }
-    setCurrentUser(updatedUser)
-    writeToStorage(STORAGE_KEYS.USER, updatedUser)
-
     if (isSupabaseConfigured) {
       // 用 studentId 更新 students 表（不是 accounts 的 id）
       const targetId = currentUser.studentId || currentUser.id
@@ -424,17 +476,22 @@ export function AuthProvider({ children }) {
       if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar
 
       if (Object.keys(dbUpdates).length > 0) {
-        const { error } = await supabase.from('students').update(dbUpdates).eq('id', targetId)
+        const { data, error } = await supabase.from('students').update(dbUpdates).eq('id', targetId).select('id').maybeSingle()
         if (error) {
           return { success: false, message: '保存失败: ' + error.message }
         }
+        if (!data) return { success: false, message: '保存失败：未找到对应的学生档案' }
       }
     }
+
+    const updatedUser = { ...currentUser, ...updates }
+    setCurrentUser(updatedUser)
+    writeToStorage(STORAGE_KEYS.USER, updatedUser)
 
     // 本地同步
     const targetId = currentUser.studentId || currentUser.id
     const updatedStudents = students.map(s =>
-      s.id === targetId ? { ...s, ...updates } : s
+      String(s.id) === String(targetId) ? { ...s, ...updates } : s
     )
     setStudents(updatedStudents)
     if (!isSupabaseConfigured) writeToStorage(STORAGE_KEYS.STUDENTS, updatedStudents)
