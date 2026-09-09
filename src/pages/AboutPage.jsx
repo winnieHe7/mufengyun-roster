@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Mail, MapPin, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
+import { ArrowLeft, Mail, MapPin, Briefcase, CheckCircle2, Medal, BadgeCheck } from 'lucide-react'
 import Header from '../components/Header.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import { handleAvatarError } from '../utils/avatar.js'
 import { loadMentorInfo } from '../utils/mentorProfile.js'
 
@@ -10,6 +11,8 @@ import { loadMentorInfo } from '../utils/mentorProfile.js'
  */
 export default function AboutPage() {
   const navigate = useNavigate()
+  const { students } = useAuth()
+  const cohorts = [...new Set((students || []).map(student => student.enrollYear).filter(Boolean))].sort((a, b) => b - a)
   const [mentor, setMentor] = useState(null)
 
   useEffect(() => {
@@ -69,6 +72,33 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
+
+            <div className="mb-7 grid gap-2 sm:grid-cols-3">
+              <div className="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
+                <p className="text-xs text-gray-400">职务</p>
+                <p className="mt-1 text-sm font-medium text-gray-700">{mentor.title}</p>
+              </div>
+              <div className="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
+                <p className="text-xs text-gray-400">办公地点</p>
+                <p className="mt-1 text-sm font-medium text-gray-700">{mentor.contact.office}</p>
+              </div>
+              <div className="rounded-lg border border-gray-100 bg-gray-50/70 p-3">
+                <p className="text-xs text-gray-400">指导届次</p>
+                <p className="mt-1 text-sm font-medium text-gray-700">{cohorts.length ? cohorts.length + ' 个年级' : '持续更新中'}</p>
+              </div>
+            </div>
+
+            <div className="mb-7">
+              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">指导学生届次</h3>
+              <div className="flex flex-wrap gap-2">
+                {(cohorts.length ? cohorts : ['历届校友']).map(year => (
+                  <span key={year} className="rounded-full border border-primary-100 bg-primary-50 px-3 py-1 text-xs text-primary-600">
+                    {year === '历届校友' ? year : year + '级'}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             {/* 研究方向 */}
             <div className="mb-6">
               <h3 className="text-base font-semibold text-primary-500 section-title mb-3">研究方向</h3>
@@ -77,6 +107,22 @@ export default function AboutPage() {
                   <span key={i} className="rounded-lg border border-primary-100 bg-primary-50 px-3 py-1.5 text-sm text-primary-700">
                     {r}
                   </span>
+                ))}
+              </div>
+            </div>
+
+            {/* 工作经历 */}
+            <div className="mb-6">
+              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">工作经历</h3>
+              <div className="space-y-3">
+                {mentor.experience.map((exp, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 bg-warm-100 rounded-lg">
+                    <Briefcase size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-700">{exp.role} · {exp.org}</p>
+                      <p className="text-xs text-gray-400">{exp.period}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -116,6 +162,18 @@ export default function AboutPage() {
                     <Medal size={16} className="text-accent-400 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-gray-600">{h}</p>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 奖教金 */}
+            <div>
+              <h3 className="text-base font-semibold text-primary-500 section-title mb-3">奖教金</h3>
+              <div className="flex flex-wrap gap-2">
+                {mentor.awards.map((award, i) => (
+                  <span key={i} className="px-3 py-1.5 bg-amber-50 text-amber-700 text-sm rounded-lg border border-amber-100">
+                    {award}
+                  </span>
                 ))}
               </div>
             </div>
