@@ -7,13 +7,13 @@ import { useAuth } from '../context/AuthContext.jsx'
 
 /**
  * 统计分析页
- * 展示全维度分布数据：按届别、行业、城市、状态的柱状图和饼图
+ * 展示全维度分布数据：按入学年级、行业、城市、状态的柱状图和饼图
  */
 export default function StatsPage() {
   const { students } = useAuth()
   const navigate = useNavigate()
 
-  // 按届别统计
+  // 按入学年级统计
   const byYear = useMemo(() => {
     const map = {}
     students.forEach(s => {
@@ -82,7 +82,7 @@ export default function StatsPage() {
               <div className="space-y-3 text-sm"><p className="flex items-center gap-2"><i className="w-2.5 h-2.5 rounded-full bg-primary-500" />在校学生 <b className="font-medium">{active}</b></p><p className="flex items-center gap-2"><i className="w-2.5 h-2.5 rounded-full bg-amber-200" />毕业生 <b className="font-medium">{graduates}</b></p></div>
             </div>
           </div>
-          {/* 按届别分布 */}
+          {/* 按入学年级分布 */}
           <div className="card-surface flex h-[320px] min-h-0 flex-col p-4 sm:h-[340px] sm:p-5">
             <div className="mb-4 flex shrink-0 items-center gap-2">
               <BarChart3 className="text-primary-500" size={20} />

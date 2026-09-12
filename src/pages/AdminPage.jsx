@@ -249,7 +249,7 @@ export default function AdminPage() {
     const files = Array.from(event.target.files || [])
     event.target.value = ''
     if (!memoryYear) {
-      setMessage('请先选择照片所属届次')
+      setMessage('请先选择照片所属年级')
       return
     }
     if (!files.length) return
@@ -771,9 +771,9 @@ export default function AdminPage() {
             <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">同门记忆 · 照片管理</h2>
-                <p className="mt-1 text-xs text-gray-400">上传各届毕业合照，并为每张照片补充展示标签</p>
+                <p className="mt-1 text-xs text-gray-400">上传各年级毕业合照，并为每张照片补充展示标签</p>
               </div>
-              <span className="text-xs text-gray-400">共 {memoryPhotos.length} 张 · 覆盖 {new Set(memoryPhotos.map(photo => String(photo.year))).size} 个届次</span>
+              <span className="text-xs text-gray-400">共 {memoryPhotos.length} 张 · 覆盖 {new Set(memoryPhotos.map(photo => String(photo.year))).size} 个年级</span>
             </div>
 
             <section
@@ -797,10 +797,10 @@ export default function AdminPage() {
               </div>
               <div className="mt-5 grid gap-3 border-t border-primary-100 pt-4 sm:grid-cols-3">
                 <label className="text-left text-xs text-gray-500">
-                  <span className="mb-1 block">所属届次 *</span>
+                  <span className="mb-1 block">所属年级 *</span>
                   <select value={memoryYear} onChange={event => setMemoryYear(event.target.value)} className={inputClass}>
-                    <option value="">请选择届次</option>
-                    {memoryYears.map(year => <option key={year} value={year}>{year}届</option>)}
+                    <option value="">请选择年级</option>
+                    {memoryYears.map(year => <option key={year} value={year}>{year}级</option>)}
                   </select>
                 </label>
                 <label className="text-left text-xs text-gray-500">
@@ -824,20 +824,20 @@ export default function AdminPage() {
               <div className="rounded-xl border border-warm-200 bg-white py-12 text-center text-sm text-gray-400">
                 <Images size={40} className="mx-auto mb-3 opacity-30" aria-hidden="true" />
                 <p>暂无同门记忆照片</p>
-                <p className="mt-1 text-xs">选择届次后即可批量上传毕业合照</p>
+                <p className="mt-1 text-xs">选择年级后即可批量上传毕业合照</p>
               </div>
             ) : (
               memoryYears.filter(year => memoryPhotos.some(photo => String(photo.year) === year)).map(year => (
                 <section key={year} className="rounded-xl border border-warm-200 bg-white p-4 shadow-sm sm:p-5">
                   <div className="mb-4 flex items-baseline gap-2 border-b border-gray-100 pb-3">
-                    <h3 className="font-semibold text-primary-600">{year}届 · 毕业合照</h3>
+                    <h3 className="font-semibold text-primary-600">{year}级 · 毕业合照</h3>
                     <span className="text-xs text-gray-400">{memoryPhotos.filter(photo => String(photo.year) === year).length} 张</span>
                   </div>
                   <div className="space-y-4">
                     {memoryPhotos.filter(photo => String(photo.year) === year).map((photo, index, yearPhotos) => (
                       <div key={photo.id} className="grid gap-4 border-b border-gray-100 pb-4 last:border-0 last:pb-0 md:grid-cols-[150px_minmax(0,1fr)_auto] md:items-start">
                         <div className="aspect-[4/3] overflow-hidden rounded-lg border border-primary-100 bg-primary-50">
-                          {photo.src ? <img src={photo.src} alt={photo.label || `${year}届毕业合照`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-sm text-primary-400">毕业合照</div>}
+                          {photo.src ? <img src={photo.src} alt={photo.label || `${year}级毕业合照`} className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-sm text-primary-400">毕业合照</div>}
                         </div>
                         <div className="grid gap-2 sm:grid-cols-2">
                           <label className="text-xs text-gray-500 sm:col-span-2">

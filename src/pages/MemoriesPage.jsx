@@ -14,7 +14,7 @@ const PALETTES = [
 
 /**
  * 同门记忆页
- * 根据当前名录中的入学年份生成各届毕业合照展示位，后续可直接替换为真实照片资源。
+ * 根据当前名录中的入学年份生成各年级毕业合照展示位，后续可直接替换为真实照片资源。
  */
 export default function MemoriesPage() {
   const navigate = useNavigate()
@@ -107,10 +107,10 @@ export default function MemoriesPage() {
               </div>
               <div className="min-w-0">
                 <h1 className="truncate text-lg font-medium text-gray-900">同门记忆</h1>
-                <p className="mt-0.5 text-xs text-gray-400">记录每一届同门的毕业合照</p>
+                <p className="mt-0.5 text-xs text-gray-400">记录每个年级同门的毕业合照</p>
               </div>
             </div>
-            <span className="text-xs text-gray-400">共 {photos.length} 张照片 · 覆盖 {cohorts.length} 个毕业届次</span>
+            <span className="text-xs text-gray-400">共 {photos.length} 张照片 · 覆盖 {cohorts.length} 个年级</span>
           </div>
 
           <div className="border-b border-gray-100 bg-gray-50/70 px-4 py-3 text-xs text-gray-400 sm:px-6">
@@ -126,7 +126,7 @@ export default function MemoriesPage() {
               return (
                 <section key={year}>
                   <div className="mb-3 flex items-baseline gap-2">
-                    <h2 className="text-base font-semibold text-gray-900">{year}届 · 毕业合照</h2>
+                    <h2 className="text-base font-semibold text-gray-900">{year}级 · 毕业合照</h2>
                     <span className="text-xs text-gray-400">{cohortPhotos.length} 张</span>
                   </div>
                   <div className="min-w-0 overflow-x-auto pb-2 md:overflow-visible">
@@ -137,10 +137,10 @@ export default function MemoriesPage() {
                           key={photo.id || `${photo.year}-${photo.index}`}
                           onClick={() => setSelected(photo)}
                           className="group relative aspect-[4/3] min-w-0 overflow-hidden rounded-xl border border-primary-100 bg-gradient-to-br text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-2"
-                          aria-label={`查看${photo.year}届毕业合照，第${photo.index + 1}张`}
+                          aria-label={`查看${photo.year}级毕业合照，第${photo.index + 1}张`}
                         >
                           {photo.src ? (
-                            <img src={photo.src} alt={photo.label || `${photo.year}届毕业合照`} className="absolute inset-0 h-full w-full object-cover" />
+                            <img src={photo.src} alt={photo.label || `${photo.year}级毕业合照`} className="absolute inset-0 h-full w-full object-cover" />
                           ) : (
                             <>
                               <div className={`absolute inset-0 bg-gradient-to-br ${photo.palette}`} />
@@ -153,7 +153,7 @@ export default function MemoriesPage() {
                             </>
                           )}
                           <span className="absolute right-2.5 top-2.5 rounded-full bg-primary-700/60 px-2.5 py-1 text-[11px] font-medium text-white">{photo.index + 1} / {cohortPhotos.length}</span>
-                          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-900/80 to-transparent px-3 pb-2.5 pt-8 text-xs font-medium text-white">{photo.label || `${photo.year}届毕业合照`}</span>
+                          <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary-900/80 to-transparent px-3 pb-2.5 pt-8 text-xs font-medium text-white">{photo.label || `${photo.year}级毕业合照`}</span>
                         </button>
                       ))}
                     </div>
@@ -167,16 +167,16 @@ export default function MemoriesPage() {
 
       {selectedPhoto && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-3 sm:p-6" onClick={() => setSelected(null)}>
-          <div className="relative w-full max-w-5xl" role="dialog" aria-modal="true" aria-label={`${selectedPhoto.year}届毕业合照`} onClick={event => event.stopPropagation()}>
+          <div className="relative w-full max-w-5xl" role="dialog" aria-modal="true" aria-label={`${selectedPhoto.year}级毕业合照`} onClick={event => event.stopPropagation()}>
             <button type="button" onClick={() => setSelected(null)} aria-label="关闭照片预览" className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-sm transition hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"><X size={18} /></button>
             <div className={`relative flex aspect-[16/9] items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-gradient-to-br ${selectedPhoto.palette}`}>
               {selectedPhoto.src ? (
-                <img src={selectedPhoto.src} alt={selectedPhoto.label || `${selectedPhoto.year}届毕业合照`} className="h-full w-full object-contain" />
+                <img src={selectedPhoto.src} alt={selectedPhoto.label || `${selectedPhoto.year}级毕业合照`} className="h-full w-full object-contain" />
               ) : (
                 <div className="text-center text-primary-900/65">
                   <Images className="mx-auto mb-3" size={52} strokeWidth={1.25} aria-hidden="true" />
                   <p className="text-2xl tracking-[0.45em]">毕业合照</p>
-                  <p className="mt-2 text-sm tracking-normal">{selectedPhoto.year}届 · 第 {selectedPhoto.index + 1} 张</p>
+                  <p className="mt-2 text-sm tracking-normal">{selectedPhoto.year}级 · 第 {selectedPhoto.index + 1} 张</p>
                 </div>
               )}
               {selectedIndex > 0 && <button type="button" onClick={() => setSelected(photos[selectedIndex - 1])} aria-label="上一张照片" className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/75 text-primary-800 shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary-300"><ChevronLeft size={20} /></button>}

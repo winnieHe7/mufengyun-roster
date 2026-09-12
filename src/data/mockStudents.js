@@ -1,6 +1,6 @@
 /**
  * 模拟学生数据
- * 包含40条学生记录，涵盖2018届~2026届多个专业、城市、行业
+ * 包含40条学生记录，涵盖2018级~2026级多个专业、城市、行业
  * @typedef {Object} Student
  * @property {number} id - 学生ID
  * @property {string} name - 姓名
