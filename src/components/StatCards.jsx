@@ -5,7 +5,7 @@ import { TrendingUp, Users, GraduationCap, School, MapPin } from 'lucide-react'
  * 展示四项核心数据和完整统计入口
  * @param {Object} props
  * @param {number} props.total - 总人数
- * @param {number} props.graduates - 往届毕业生数
+ * @param {number} props.graduates - 毕业生数
  * @param {number} props.active - 在校学生数
  * @param {number} props.cities - 就业覆盖城市数
  * @param {Function} [props.onViewFullStats] - 查看完整统计回调
